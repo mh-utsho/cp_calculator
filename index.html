@@ -24,7 +24,8 @@
   --green-bg:  #0a2018;
   --red:       #f56565;
   --red-bg:    #250f0f;
-  --shadow:    0 4px 32px rgba(0,0,0,0.5);
+  --purple:    #c084fc;
+  --purple-bg: #2a1040;
   --shadow2:   0 2px 12px rgba(0,0,0,0.3);
 }
 
@@ -45,12 +46,12 @@
   --green-bg:  #e0f7ef;
   --red:       #c0392b;
   --red-bg:    #fdecea;
-  --shadow:    0 4px 32px rgba(80,90,180,0.10);
+  --purple:    #9333ea;
+  --purple-bg: #f3e8ff;
   --shadow2:   0 2px 12px rgba(80,90,180,0.07);
 }
 
 html { font-size: 16px; }
-
 body {
   background: var(--bg);
   color: var(--text);
@@ -59,17 +60,16 @@ body {
   transition: background 0.25s, color 0.25s;
 }
 
-/* ── LAYOUT ───────────────────────────────── */
+/* ── LAYOUT ─────────────────────────────── */
 .app {
   display: grid;
   grid-template-columns: 1fr;
   min-height: 100vh;
   grid-template-rows: auto auto 1fr;
 }
-
-@media (min-width: 900px) {
+@media (min-width: 960px) {
   .app {
-    grid-template-columns: 420px 1fr;
+    grid-template-columns: 440px 1fr;
     grid-template-rows: auto 1fr;
   }
   .app-header  { grid-column: 1 / -1; }
@@ -78,7 +78,7 @@ body {
   .right-panel { display: block !important; overflow-y: auto; }
 }
 
-/* ── HEADER ───────────────────────────────── */
+/* ── HEADER ─────────────────────────────── */
 .app-header {
   display: flex;
   align-items: center;
@@ -92,304 +92,161 @@ body {
   box-shadow: var(--shadow2);
   transition: background 0.25s;
 }
-
-.header-title {
-  font-size: 12px;
-  letter-spacing: 0.18em;
-  color: var(--text3);
-  text-transform: uppercase;
-  font-weight: 600;
-}
+.header-title { font-size: 12px; letter-spacing: 0.18em; color: var(--text3); text-transform: uppercase; font-weight: 600; }
 .header-title span { color: var(--accent); }
 
-/* Toggle switch */
-.theme-toggle {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  user-select: none;
-}
-.toggle-label {
-  font-size: 11px;
-  color: var(--text3);
-  letter-spacing: 0.05em;
-  transition: color 0.2s;
-}
-.toggle-track {
-  width: 52px;
-  height: 26px;
-  background: var(--bg3);
-  border: 0.5px solid var(--border2);
-  border-radius: 50px;
-  position: relative;
-  transition: background 0.25s;
-  flex-shrink: 0;
-}
+.theme-toggle { display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; }
+.toggle-label { font-size: 11px; color: var(--text3); letter-spacing: 0.05em; transition: color 0.2s; }
+.toggle-track { width: 52px; height: 26px; background: var(--bg3); border: 0.5px solid var(--border2); border-radius: 50px; position: relative; transition: background 0.25s; flex-shrink: 0; }
 [data-theme="light"] .toggle-track { background: var(--accent-bg); border-color: var(--accent); }
-.toggle-thumb {
-  position: absolute;
-  top: 3px; left: 3px;
-  width: 18px; height: 18px;
-  border-radius: 50%;
-  background: var(--accent);
-  transition: transform 0.25s cubic-bezier(.4,0,.2,1);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 10px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.3);
-}
+.toggle-thumb { position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: var(--accent); transition: transform 0.25s cubic-bezier(.4,0,.2,1); display: flex; align-items: center; justify-content: center; font-size: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.3); }
 [data-theme="light"] .toggle-thumb { transform: translateX(26px); }
 
 /* ── MOBILE TABS ─────────────────────────── */
-.mob-tabs {
-  display: flex;
-  background: var(--bg2);
-  border-bottom: 0.5px solid var(--border);
-  transition: background 0.25s;
-}
-.mob-tab {
-  flex: 1;
-  background: none;
-  border: none;
-  border-bottom: 2px solid transparent;
-  padding: 10px;
-  font-family: inherit;
-  font-size: 12px;
-  color: var(--text3);
-  cursor: pointer;
-  transition: color 0.15s, border-color 0.15s;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
+.mob-tabs { display: flex; background: var(--bg2); border-bottom: 0.5px solid var(--border); transition: background 0.25s; }
+.mob-tab { flex: 1; background: none; border: none; border-bottom: 2px solid transparent; padding: 10px; font-family: inherit; font-size: 12px; color: var(--text3); cursor: pointer; transition: color 0.15s, border-color 0.15s; letter-spacing: 0.06em; text-transform: uppercase; }
 .mob-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
 
-/* ── LEFT PANEL ───────────────────────────── */
-.left-panel {
-  background: var(--bg2);
-  padding: 1rem;
-  flex-direction: column;
-  gap: 10px;
-  display: none;
-  transition: background 0.25s;
-}
+/* ── LEFT PANEL ─────────────────────────── */
+.left-panel { background: var(--bg2); padding: 0.9rem; flex-direction: column; gap: 9px; display: none; transition: background 0.25s; }
 .left-panel.mob-active { display: flex; }
 
-/* Display */
-.display {
-  background: var(--bg);
-  border: 0.5px solid var(--border2);
-  border-radius: 14px;
-  padding: 1rem 1.2rem;
-  transition: background 0.25s, border-color 0.25s;
-}
-.display-main {
-  font-size: clamp(24px, 6vw, 36px);
-  font-weight: 700;
-  color: var(--text);
-  word-break: break-all;
-  min-height: 46px;
-  letter-spacing: -0.02em;
-  line-height: 1.2;
-}
-.display-expr {
-  font-size: 11px;
-  color: var(--text3);
-  min-height: 16px;
-  margin-top: 4px;
-  word-break: break-all;
-}
-.bases {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 6px;
-  margin-top: 10px;
-}
-.base-card {
-  background: var(--bg2);
-  border: 0.5px solid var(--border);
-  border-radius: 8px;
-  padding: 5px 8px;
-  transition: background 0.25s;
-}
-.base-label {
-  font-size: 9px;
-  letter-spacing: 0.1em;
-  color: var(--text3);
-  text-transform: uppercase;
-  margin-bottom: 2px;
-}
-.base-val {
-  font-size: 10px;
-  color: var(--text2);
-  word-break: break-all;
-  line-height: 1.4;
-}
+.display { background: var(--bg); border: 0.5px solid var(--border2); border-radius: 14px; padding: 0.9rem 1.1rem; transition: background 0.25s, border-color 0.25s; }
+.display-main { font-size: clamp(22px, 5.5vw, 34px); font-weight: 700; color: var(--text); word-break: break-all; min-height: 42px; letter-spacing: -0.02em; line-height: 1.2; }
+.display-expr { font-size: 11px; color: var(--text3); min-height: 16px; margin-top: 4px; word-break: break-all; }
+.bases { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; margin-top: 9px; }
+.base-card { background: var(--bg2); border: 0.5px solid var(--border); border-radius: 7px; padding: 5px 7px; transition: background 0.25s; }
+.base-label { font-size: 9px; letter-spacing: 0.1em; color: var(--text3); text-transform: uppercase; margin-bottom: 2px; }
+.base-val { font-size: 10px; color: var(--text2); word-break: break-all; line-height: 1.4; }
 
-.sec-label {
-  font-size: 9px;
-  letter-spacing: 0.12em;
-  color: var(--text3);
-  text-transform: uppercase;
-  padding: 0 2px;
-}
+.sec-label { font-size: 9px; letter-spacing: 0.12em; color: var(--text3); text-transform: uppercase; padding: 0 2px; }
 
-/* Button grids */
-.btn-grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 5px;
-}
-.hex-row {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 5px;
-}
+.btn-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; }
+.hex-row  { display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; }
+.comb-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
 
 .btn {
   background: var(--bg3);
   border: 0.5px solid var(--border);
   border-radius: 9px;
-  height: clamp(42px, 9vw, 52px);
+  height: clamp(40px, 8.5vw, 50px);
   font-family: inherit;
-  font-size: clamp(11px, 2.5vw, 13px);
+  font-size: clamp(10px, 2.2vw, 12px);
   color: var(--text2);
   cursor: pointer;
-  transition: background 0.1s, transform 0.08s, border-color 0.1s;
+  transition: background 0.1s, transform 0.08s;
   user-select: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  white-space: nowrap;
+  display: flex; align-items: center; justify-content: center;
+  white-space: nowrap; text-align: center; padding: 0 3px;
 }
 .btn:hover  { background: var(--bg2); border-color: var(--border2); color: var(--text); }
 .btn:active { transform: scale(0.92); }
 
-.btn.num    { color: var(--text); font-size: clamp(14px,3.5vw,17px); font-weight: 600; }
+.btn.num    { color: var(--text); font-size: clamp(13px,3vw,16px); font-weight: 600; }
 .btn.op     { color: var(--accent); border-color: var(--accent-bg); background: var(--accent-bg); }
 .btn.logic  { color: var(--warn);   border-color: var(--warn-bg);   background: var(--warn-bg); }
 .btn.shift  { color: var(--green);  border-color: var(--green-bg);  background: var(--green-bg); }
 .btn.action { color: var(--red);    border-color: var(--red-bg);    background: var(--red-bg); }
-.btn.equals {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #fff;
-  font-size: 20px;
-  font-weight: 700;
-}
+.btn.comb   { color: var(--purple); border-color: var(--purple-bg); background: var(--purple-bg); font-size: clamp(10px,2vw,12px); }
+.btn.equals { background: var(--accent); border-color: var(--accent); color: #fff; font-size: 20px; font-weight: 700; }
 .btn.equals:hover { opacity: 0.88; background: var(--accent); }
 
-.ops-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-}
-.op-btn {
-  background: var(--bg3);
-  border: 0.5px solid var(--border);
-  border-radius: 8px;
-  padding: 7px 13px;
-  font-family: inherit;
-  font-size: 11px;
-  color: var(--text2);
-  cursor: pointer;
-  transition: background 0.1s, color 0.1s;
-  white-space: nowrap;
-}
+.ops-row { display: flex; flex-wrap: wrap; gap: 5px; }
+.op-btn { background: var(--bg3); border: 0.5px solid var(--border); border-radius: 8px; padding: 6px 11px; font-family: inherit; font-size: 11px; color: var(--text2); cursor: pointer; transition: background 0.1s, color 0.1s; white-space: nowrap; }
 .op-btn:hover  { background: var(--bg2); border-color: var(--border2); color: var(--text); }
 .op-btn:active { transform: scale(0.95); }
 
-/* ── RIGHT PANEL ───────────────────────────── */
-.right-panel {
+/* ── COMBINATORICS INPUT AREA ─────────── */
+.combo-box {
   background: var(--bg);
-  padding: 1.25rem 1.5rem;
-  display: none;
-  transition: background 0.25s;
+  border: 0.5px solid var(--border);
+  border-radius: 10px;
+  padding: 8px 10px;
 }
-.right-panel.mob-active { display: block; }
-
-@media (min-width: 900px) {
-  .right-panel { padding: 1.5rem 2rem; }
-}
-
-.right-title {
-  font-size: 11px;
-  letter-spacing: 0.15em;
-  color: var(--text3);
-  text-transform: uppercase;
-  margin-bottom: 12px;
-}
-.multi-input {
-  width: 100%;
+.combo-inputs { display: flex; gap: 8px; align-items: center; margin-bottom: 6px; }
+.combo-field {
+  flex: 1;
   background: var(--bg2);
   border: 0.5px solid var(--border2);
-  border-radius: 10px;
-  padding: 10px 14px;
+  border-radius: 7px;
+  padding: 6px 10px;
   font-family: inherit;
-  font-size: 13px;
+  font-size: 12px;
   color: var(--text);
   outline: none;
-  transition: border-color 0.15s, background 0.25s;
-  margin-bottom: 8px;
-  resize: vertical;
-  min-height: 64px;
+  transition: border-color 0.15s;
 }
+.combo-field:focus { border-color: var(--accent); }
+.combo-field::placeholder { color: var(--text3); }
+.combo-label { font-size: 11px; color: var(--text3); white-space: nowrap; }
+.combo-btns { display: flex; gap: 5px; flex-wrap: wrap; }
+.combo-btn {
+  background: var(--purple-bg);
+  border: 0.5px solid var(--purple);
+  border-radius: 7px;
+  padding: 5px 12px;
+  font-family: inherit;
+  font-size: 11px;
+  color: var(--purple);
+  cursor: pointer;
+  transition: opacity 0.1s;
+}
+.combo-btn:hover  { opacity: 0.8; }
+.combo-btn:active { transform: scale(0.95); }
+.combo-result { font-size: 12px; color: var(--text2); margin-top: 6px; word-break: break-all; }
+.combo-result b { color: var(--purple); }
+
+/* ── RIGHT PANEL ─────────────────────── */
+.right-panel { background: var(--bg); padding: 1.25rem 1.25rem; display: none; transition: background 0.25s; }
+.right-panel.mob-active { display: block; }
+@media (min-width: 960px) { .right-panel { padding: 1.5rem 2rem; } }
+
+.right-title { font-size: 11px; letter-spacing: 0.15em; color: var(--text3); text-transform: uppercase; margin-bottom: 10px; }
+.multi-input { width: 100%; background: var(--bg2); border: 0.5px solid var(--border2); border-radius: 10px; padding: 10px 14px; font-family: inherit; font-size: 13px; color: var(--text); outline: none; transition: border-color 0.15s, background 0.25s; margin-bottom: 6px; resize: vertical; min-height: 64px; }
 .multi-input:focus { border-color: var(--accent); }
 .multi-input::placeholder { color: var(--text3); }
+.error { color: var(--red); font-size: 11px; margin-bottom: 6px; min-height: 16px; }
 
-.error { color: var(--red); font-size: 11px; margin-bottom: 8px; min-height: 16px; }
+.op-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 7px; margin-bottom: 12px; }
+.big-op-btn { background: var(--bg2); border: 0.5px solid var(--border); border-radius: 10px; padding: 9px 6px; font-family: inherit; font-size: 11px; color: var(--text2); cursor: pointer; transition: background 0.1s, color 0.1s; text-align: center; line-height: 1.4; }
+.big-op-btn:hover  { background: var(--bg3); border-color: var(--border2); color: var(--text); }
+.big-op-btn:active { transform: scale(0.96); }
+.big-op-btn .sym { display: block; font-size: 16px; color: var(--accent); margin-bottom: 2px; }
 
-.op-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-  gap: 7px;
-  margin-bottom: 14px;
-}
-.big-op-btn {
+/* Sort buttons */
+.sort-row { display: flex; gap: 8px; margin-bottom: 12px; }
+.sort-btn {
+  flex: 1;
   background: var(--bg2);
   border: 0.5px solid var(--border);
   border-radius: 10px;
-  padding: 10px 8px;
+  padding: 9px 8px;
   font-family: inherit;
-  font-size: 11px;
+  font-size: 12px;
   color: var(--text2);
   cursor: pointer;
-  transition: background 0.1s, color 0.1s, border-color 0.1s;
+  transition: background 0.1s, color 0.1s;
   text-align: center;
-  line-height: 1.4;
 }
-.big-op-btn:hover  { background: var(--bg3); border-color: var(--border2); color: var(--text); }
-.big-op-btn:active { transform: scale(0.96); }
-.big-op-btn .sym { display: block; font-size: 17px; color: var(--accent); margin-bottom: 3px; }
+.sort-btn:hover  { background: var(--bg3); border-color: var(--border2); color: var(--text); }
+.sort-btn:active { transform: scale(0.96); }
+.sort-btn .sym { display: block; font-size: 18px; color: var(--green); margin-bottom: 2px; }
 
-/* Result */
-.result-block {
-  background: var(--bg2);
-  border: 0.5px solid var(--border);
-  border-radius: 12px;
-  overflow: hidden;
-  transition: background 0.25s;
-}
-.result-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  padding: 9px 14px;
-  border-bottom: 0.5px solid var(--border);
-  gap: 12px;
-}
+.result-block { background: var(--bg2); border: 0.5px solid var(--border); border-radius: 12px; overflow: hidden; transition: background 0.25s; }
+.result-row { display: flex; justify-content: space-between; align-items: baseline; padding: 8px 14px; border-bottom: 0.5px solid var(--border); gap: 12px; }
 .result-row:last-child { border-bottom: none; }
 .rk { color: var(--text3); font-size: 11px; white-space: nowrap; flex-shrink: 0; }
 .rv { color: var(--text); font-size: 12px; word-break: break-all; text-align: right; }
-.rv.big { color: var(--accent); font-size: 22px; font-weight: 700; }
+.rv.big { color: var(--accent); font-size: 20px; font-weight: 700; }
+.rv.sort-val { color: var(--green); font-size: 12px; }
+.rv.bignum { color: var(--purple); font-size: 14px; font-weight: 700; }
 
-/* Scrollbar */
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
 </style>
 </head>
 <body>
-
 <div class="app">
 
   <!-- HEADER -->
@@ -405,13 +262,14 @@ body {
 
   <!-- MOBILE TABS -->
   <div class="mob-tabs" id="mobTabs">
-    <button class="mob-tab active" onclick="mobSwitch('calc', this)">calculator</button>
-    <button class="mob-tab"        onclick="mobSwitch('multi', this)">multi-value</button>
+    <button class="mob-tab active" onclick="mobSwitch('calc',this)">calculator</button>
+    <button class="mob-tab"        onclick="mobSwitch('multi',this)">multi-value</button>
   </div>
 
   <!-- LEFT: Calculator -->
   <section class="left-panel mob-active" id="leftPanel">
 
+    <!-- Display -->
     <div class="display">
       <div class="display-main" id="disp">0</div>
       <div class="display-expr" id="exprDisp"></div>
@@ -423,6 +281,7 @@ body {
       </div>
     </div>
 
+    <!-- Main buttons -->
     <div class="sec-label">arithmetic &amp; bitwise</div>
     <div class="btn-grid">
       <button class="btn action" onclick="clearAll()">C</button>
@@ -456,7 +315,8 @@ body {
       <button class="btn equals" onclick="calculate()">=</button>
     </div>
 
-    <div class="sec-label">hex digits &amp; xor/not</div>
+    <!-- Hex + XOR/NOT row -->
+    <div class="sec-label">hex digits &amp; bitwise ops</div>
     <div class="hex-row">
       <button class="btn op"    onclick="inputDigit('A')">A</button>
       <button class="btn op"    onclick="inputDigit('B')">B</button>
@@ -474,13 +334,33 @@ body {
       <button class="btn logic" onclick="doBitCount()">pcnt</button>
     </div>
 
-    <div class="sec-label">extras</div>
-    <div class="ops-row">
-      <button class="op-btn" onclick="doAbs()">ABS</button>
-      <button class="op-btn" onclick="doSquare()">x&sup2;</button>
-      <button class="op-btn" onclick="doSqrt()">&#x221A;x</button>
-      <button class="op-btn" onclick="inputOp('0b')">0b&#x2026;</button>
-      <button class="op-btn" onclick="inputOp('0o')">0o&#x2026;</button>
+    <!-- Math extras -->
+    <div class="sec-label">math extras</div>
+    <div class="hex-row">
+      <button class="btn shift" onclick="doAbs()">ABS</button>
+      <button class="btn shift" onclick="doSquare()">x&sup2;</button>
+      <button class="btn shift" onclick="doSqrt()">&#x221A;x</button>
+      <button class="btn op"    onclick="inputOp('0b')">0b&hellip;</button>
+      <button class="btn op"    onclick="inputOp('0o')">0o&hellip;</button>
+      <button class="btn comb"  onclick="doFactorial()">n!</button>
+    </div>
+
+    <!-- Combinatorics section -->
+    <div class="sec-label">combinatorics — enter n and r below</div>
+    <div class="combo-box">
+      <div class="combo-inputs">
+        <span class="combo-label">n =</span>
+        <input class="combo-field" id="combN" type="number" min="0" placeholder="n" />
+        <span class="combo-label">r =</span>
+        <input class="combo-field" id="combR" type="number" min="0" placeholder="r" />
+      </div>
+      <div class="combo-btns">
+        <button class="combo-btn" onclick="doCombination()">C(n,r) — Combinations</button>
+        <button class="combo-btn" onclick="doPermutation()">P(n,r) — Permutations</button>
+        <button class="combo-btn" onclick="doFactorialN()">n!</button>
+        <button class="combo-btn" onclick="doFactorialR()">r!</button>
+      </div>
+      <div class="combo-result" id="comboResult">Enter n and r, then press a function.</div>
     </div>
 
   </section>
@@ -493,6 +373,17 @@ body {
       placeholder="Paste values — space, comma, or newline separated&#10;e.g.  10 30 20 30 10&#10;or    0xFF, 0b1010, 42, 0o17"></textarea>
     <div class="error" id="multiErr"></div>
 
+    <div class="right-title" style="margin-bottom:6px;">// sort</div>
+    <div class="sort-row">
+      <button class="sort-btn" onclick="multiSort('asc')">
+        <span class="sym">↑ A→Z</span>ascending
+      </button>
+      <button class="sort-btn" onclick="multiSort('desc')">
+        <span class="sym">↓ Z→A</span>descending
+      </button>
+    </div>
+
+    <div class="right-title" style="margin-bottom:6px;">// operations</div>
     <div class="op-grid">
       <button class="big-op-btn" onclick="multiOp('sum')">    <span class="sym">+</span>SUM</button>
       <button class="big-op-btn" onclick="multiOp('or')">     <span class="sym">|</span>OR all</button>
@@ -511,21 +402,51 @@ body {
 </div>
 
 <script>
+// ── BIG INTEGER FACTORIAL (exact, arbitrary size) ───────────
+function factBig(n) {
+  if (n < 0n) return null;
+  let r = 1n;
+  for (let i = 2n; i <= n; i++) r *= i;
+  return r;
+}
+
+function combBig(n, r) {
+  if (r > n || r < 0n) return 0n;
+  if (r === 0n || r === n) return 1n;
+  if (r > n - r) r = n - r;
+  let num = 1n, den = 1n;
+  for (let i = 0n; i < r; i++) {
+    num *= (n - i);
+    den *= (i + 1n);
+  }
+  return num / den;
+}
+
+function permBig(n, r) {
+  if (r > n || r < 0n) return 0n;
+  let result = 1n;
+  for (let i = 0n; i < r; i++) result *= (n - i);
+  return result;
+}
+
+function fmtBig(label, val, formula) {
+  const s = val.toString();
+  const digits = s.replace('-','').length;
+  document.getElementById('comboResult').innerHTML =
+    `<b>${label}</b> = ${s}<br><span style="color:var(--text3);font-size:10px;">${formula} &nbsp; (${digits} digits)</span>`;
+}
+
 // ── THEME ────────────────────────────────────────────────────
 function applyTheme(theme) {
   document.documentElement.setAttribute('data-theme', theme);
-  const isDark = theme === 'dark';
-  document.getElementById('toggleThumb').textContent = isDark ? '🌙' : '☀️';
-  document.getElementById('themeLabel').textContent  = isDark ? 'dark' : 'light';
+  const dark = theme === 'dark';
+  document.getElementById('toggleThumb').textContent = dark ? '🌙' : '☀️';
+  document.getElementById('themeLabel').textContent  = dark ? 'dark' : 'light';
   localStorage.setItem('pc-theme', theme);
 }
-
 function toggleTheme() {
-  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-  applyTheme(isDark ? 'light' : 'dark');
+  applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
 }
-
-// Load saved theme
 applyTheme(localStorage.getItem('pc-theme') || 'dark');
 
 // ── MOBILE TABS ──────────────────────────────────────────────
@@ -537,8 +458,7 @@ function mobSwitch(tab, btn) {
 }
 
 // ── CALCULATOR ───────────────────────────────────────────────
-let expr = '';
-let justCalc = false;
+let expr = '', justCalc = false;
 
 function updateDisplay(val) {
   const n = Math.trunc(Number(val));
@@ -558,60 +478,26 @@ function parseExpr(e) {
 }
 
 function tryPreview() {
-  try {
-    const r = Function('"use strict"; return (' + parseExpr(expr) + ')')();
-    if (isFinite(r)) updateDisplay(r);
-  } catch (_) {}
+  try { const r = Function('"use strict"; return (' + parseExpr(expr) + ')')(); if (isFinite(r)) updateDisplay(r); } catch (_) {}
 }
 
-function setExprDisp(txt) {
-  document.getElementById('exprDisp').textContent = txt;
-}
+function setExpr(txt) { document.getElementById('exprDisp').textContent = txt; }
 
-function inputDigit(d) {
-  if (justCalc) { expr = ''; justCalc = false; }
-  expr += d;
-  setExprDisp(expr);
-  tryPreview();
-}
-
-function inputHex() {
-  if (justCalc) { expr = ''; justCalc = false; }
-  expr += '0x';
-  setExprDisp(expr);
-}
-
-function inputOp(op) {
-  if (justCalc) justCalc = false;
-  expr += op;
-  setExprDisp(expr);
-}
-
-function backspace() {
-  expr = expr.slice(0, -1);
-  setExprDisp(expr);
-  if (!expr) updateDisplay(0); else tryPreview();
-}
-
-function clearAll() {
-  expr = ''; justCalc = false;
-  setExprDisp('');
-  updateDisplay(0);
-}
+function inputDigit(d) { if (justCalc) { expr = ''; justCalc = false; } expr += d; setExpr(expr); tryPreview(); }
+function inputHex()    { if (justCalc) { expr = ''; justCalc = false; } expr += '0x'; setExpr(expr); }
+function inputOp(op)   { if (justCalc) justCalc = false; expr += op; setExpr(expr); }
+function backspace()   { expr = expr.slice(0,-1); setExpr(expr); if (!expr) updateDisplay(0); else tryPreview(); }
+function clearAll()    { expr = ''; justCalc = false; setExpr(''); updateDisplay(0); }
 
 function calculate() {
   try {
     const result = Math.trunc(Function('"use strict"; return (' + parseExpr(expr) + ')')());
     updateDisplay(result);
-    setExprDisp(expr + '  =  ' + result);
-    expr = result.toString();
-    justCalc = true;
-  } catch (_) {
-    setExprDisp('// syntax error');
-  }
+    setExpr(expr + '  =  ' + result);
+    expr = result.toString(); justCalc = true;
+  } catch (_) { setExpr('// syntax error'); }
 }
 
-// Keyboard support
 document.addEventListener('keydown', e => {
   const tag = document.activeElement.tagName;
   if (tag === 'TEXTAREA' || tag === 'INPUT') return;
@@ -628,44 +514,69 @@ function getCurrent() {
   try { return Math.trunc(Function('"use strict"; return (' + parseExpr(expr || '0') + ')')());
   } catch (_) { return 0; } }
 
-function doNot() {
-  const v = getCurrent(), r = ~v;
-  expr = r.toString(); updateDisplay(r);
-  setExprDisp('~' + v + '  =  ' + r); justCalc = true; }
+function doNot()     { const v=getCurrent(),r=~v;      expr=r.toString(); updateDisplay(r); setExpr('~'+v+'  =  '+r); justCalc=true; }
+function doShift(d)  { const v=getCurrent(),r=d>0?v<<1:v>>1; expr=r.toString(); updateDisplay(r); setExpr(v+(d>0?' << 1':' >> 1')+'  =  '+r); justCalc=true; }
+function doAbs()     { const v=getCurrent(),r=Math.abs(v); expr=r.toString(); updateDisplay(r); setExpr('|'+v+'|  =  '+r); justCalc=true; }
+function doNegate()  { const v=getCurrent(),r=-v;      expr=r.toString(); updateDisplay(r); setExpr('-('+v+')  =  '+r); justCalc=true; }
+function doSquare()  { const v=getCurrent(),r=v*v;     expr=r.toString(); updateDisplay(r); setExpr(v+'\xb2  =  '+r); justCalc=true; }
+function doBitCount(){ const v=Math.abs(getCurrent()); setExpr('popcount('+v+')  =  '+v.toString(2).split('').filter(b=>b==='1').length+' bits set'); }
+function doSqrt()    { const v=getCurrent(); if(v<0){setExpr('// cannot sqrt negative');return;} const r=Math.trunc(Math.sqrt(v)); expr=r.toString(); updateDisplay(r); setExpr('\u221a'+v+'  \u2248  '+r+' (int)'); justCalc=true; }
 
-function doShift(dir) {
-  const v = getCurrent(), r = dir > 0 ? v << 1 : v >> 1;
-  expr = r.toString(); updateDisplay(r);
-  setExprDisp(v + (dir > 0 ? ' << 1' : ' >> 1') + '  =  ' + r); justCalc = true; }
-
-function doAbs() {
-  const v = getCurrent(), r = Math.abs(v);
-  expr = r.toString(); updateDisplay(r);
-  setExprDisp('|' + v + '|  =  ' + r); justCalc = true; }
-
-function doNegate() {
-  const v = getCurrent(), r = -v;
-  expr = r.toString(); updateDisplay(r);
-  setExprDisp('-(' + v + ')  =  ' + r); justCalc = true; }
-
-function doBitCount() {
-  const v = Math.abs(getCurrent());
-  const r = v.toString(2).split('').filter(b => b === '1').length;
-  setExprDisp('popcount(' + v + ')  =  ' + r + ' bits set'); }
-
-function doSquare() {
-  const v = getCurrent(), r = v * v;
-  expr = r.toString(); updateDisplay(r);
-  setExprDisp(v + '\xb2  =  ' + r); justCalc = true; }
-
-function doSqrt() {
+// Factorial button (uses current display value)
+function doFactorial() {
   const v = getCurrent();
-  if (v < 0) { setExprDisp('// cannot sqrt negative'); return; }
-  const r = Math.trunc(Math.sqrt(v));
-  expr = r.toString(); updateDisplay(r);
-  setExprDisp('\u221a' + v + '  \u2248  ' + r + ' (int)'); justCalc = true; }
+  if (v < 0 || v > 10000) { setExpr('// n must be 0 – 10000'); return; }
+  const r = factBig(BigInt(v));
+  const s = r.toString();
+  const digits = s.length;
+  // display truncated if huge
+  const preview = digits > 20 ? s.slice(0,15) + '…(' + digits + ' digits)' : s;
+  setExpr(v + '!  =  ' + preview);
+  justCalc = true;
+}
 
-// ── MULTI-VALUE ───────────────────────────────────────────────
+// ── COMBINATORICS BOX ───────────────────────────────────────
+function getND() {
+  const n = parseInt(document.getElementById('combN').value, 10);
+  const r = parseInt(document.getElementById('combR').value, 10);
+  if (isNaN(n) || n < 0) { document.getElementById('comboResult').innerHTML = '<b style="color:var(--red)">Enter a valid n ≥ 0</b>'; return null; }
+  return { n, r };
+}
+
+function doCombination() {
+  const nd = getND(); if (!nd) return;
+  const { n, r } = nd;
+  if (isNaN(r) || r < 0 || r > n) { document.getElementById('comboResult').innerHTML = '<b style="color:var(--red)">r must be 0 ≤ r ≤ n</b>'; return; }
+  const val = combBig(BigInt(n), BigInt(r));
+  fmtBig('C(' + n + ',' + r + ')', val, 'n! / (r! × (n-r)!)');
+}
+
+function doPermutation() {
+  const nd = getND(); if (!nd) return;
+  const { n, r } = nd;
+  if (isNaN(r) || r < 0 || r > n) { document.getElementById('comboResult').innerHTML = '<b style="color:var(--red)">r must be 0 ≤ r ≤ n</b>'; return; }
+  const val = permBig(BigInt(n), BigInt(r));
+  fmtBig('P(' + n + ',' + r + ')', val, 'n! / (n-r)!');
+}
+
+function doFactorialN() {
+  const nd = getND(); if (!nd) return;
+  const { n } = nd;
+  if (n > 10000) { document.getElementById('comboResult').innerHTML = '<b style="color:var(--red)">n too large (max 10000)</b>'; return; }
+  const val = factBig(BigInt(n));
+  fmtBig(n + '!', val, 'product 1×2×…×n');
+}
+
+function doFactorialR() {
+  const nd = getND(); if (!nd) return;
+  const { r } = nd;
+  if (isNaN(r) || r < 0) { document.getElementById('comboResult').innerHTML = '<b style="color:var(--red)">Enter a valid r ≥ 0</b>'; return; }
+  if (r > 10000) { document.getElementById('comboResult').innerHTML = '<b style="color:var(--red)">r too large (max 10000)</b>'; return; }
+  const val = factBig(BigInt(r));
+  fmtBig(r + '!', val, 'product 1×2×…×r');
+}
+
+// ── MULTI-VALUE ──────────────────────────────────────────────
 function parseVals(raw) {
   return raw.trim().split(/[\s,;\n]+/).filter(Boolean).map(tok => {
     if (/^0x/i.test(tok)) return parseInt(tok.slice(2), 16);
@@ -675,13 +586,23 @@ function parseVals(raw) {
   });
 }
 
+function getMultiNums() {
+  const raw = document.getElementById('multiVals').value;
+  const err = document.getElementById('multiErr');
+  err.textContent = '';
+  let nums;
+  try { nums = parseVals(raw); } catch (_) { err.textContent = '// parse error'; return null; }
+  if (!nums.length || nums.some(isNaN)) { err.textContent = '// invalid or empty values'; return null; }
+  return nums;
+}
+
 function fmtResult(label, result, nums, sym) {
   const abs = Math.abs(result), s = result < 0 ? '-' : '';
   const hex = s + '0x' + abs.toString(16).toUpperCase();
   const bin = s + abs.toString(2);
-  const es  = nums.length <= 8
+  const es = nums.length <= 8
     ? nums.join(' ' + sym + ' ')
-    : nums.slice(0,3).join(' '+sym+' ') + ' ... ' + nums.slice(-2).join(' '+sym+' ');
+    : nums.slice(0,3).join(' '+sym+' ') + ' … ' + nums.slice(-2).join(' '+sym+' ');
   document.getElementById('multiResult').innerHTML = `
     <div class="result-block">
       <div class="result-row"><span class="rk">${label}</span><span class="rv big">${result.toLocaleString()}</span></div>
@@ -692,29 +613,34 @@ function fmtResult(label, result, nums, sym) {
     </div>`;
 }
 
-function multiOp(op) {
-  const raw = document.getElementById('multiVals').value;
-  const err = document.getElementById('multiErr');
-  err.textContent = '';
-  let nums;
-  try { nums = parseVals(raw); } catch (_) { err.textContent = '// parse error'; return; }
-  if (!nums.length || nums.some(isNaN)) { err.textContent = '// invalid or empty values'; return; }
+function multiSort(dir) {
+  const nums = getMultiNums(); if (!nums) return;
+  const sorted = [...nums].sort((a, b) => dir === 'asc' ? a - b : b - a);
+  const arrow = dir === 'asc' ? '↑' : '↓';
+  const label = dir === 'asc' ? 'Ascending' : 'Descending';
+  document.getElementById('multiResult').innerHTML = `
+    <div class="result-block">
+      <div class="result-row"><span class="rk">${arrow} ${label} sort</span><span class="rv sort-val">${sorted.join(', ')}</span></div>
+      <div class="result-row"><span class="rk">count</span><span class="rv">${sorted.length} values</span></div>
+      <div class="result-row"><span class="rk">min → max</span><span class="rv">${Math.min(...sorted)} → ${Math.max(...sorted)}</span></div>
+    </div>`;
+}
 
-  if (op === 'sum')     return fmtResult('SUM',     nums.reduce((a,b)=>a+b,0),          nums, '+');
-  if (op === 'or')      return fmtResult('OR',      nums.reduce((a,b)=>a|b,0),          nums, '|');
-  if (op === 'and')     return fmtResult('AND',     nums.reduce((a,b)=>a&b,nums[0]),     nums, '&');
-  if (op === 'xor')     return fmtResult('XOR',     nums.reduce((a,b)=>a^b,0),          nums, '^');
-  if (op === 'min')     return fmtResult('MIN',     Math.min(...nums),                   nums, 'min');
-  if (op === 'max')     return fmtResult('MAX',     Math.max(...nums),                   nums, 'max');
-  if (op === 'product') return fmtResult('PRODUCT', nums.reduce((a,b)=>a*b,1),          nums, '\xd7');
+function multiOp(op) {
+  const nums = getMultiNums(); if (!nums) return;
+
+  if (op === 'sum')     return fmtResult('SUM',     nums.reduce((a,b)=>a+b,0),           nums, '+');
+  if (op === 'or')      return fmtResult('OR',      nums.reduce((a,b)=>a|b,0),           nums, '|');
+  if (op === 'and')     return fmtResult('AND',     nums.reduce((a,b)=>a&b,nums[0]),      nums, '&');
+  if (op === 'xor')     return fmtResult('XOR',     nums.reduce((a,b)=>a^b,0),           nums, '^');
+  if (op === 'min')     return fmtResult('MIN',     Math.min(...nums),                    nums, 'min');
+  if (op === 'max')     return fmtResult('MAX',     Math.max(...nums),                    nums, 'max');
+  if (op === 'product') return fmtResult('PRODUCT', nums.reduce((a,b)=>a*b,1),           nums, '×');
   if (op === 'avg')     return fmtResult('AVG',     Math.round(nums.reduce((a,b)=>a+b,0)/nums.length), nums, '+');
   if (op === 'notall') {
     const rows = nums.map(n => {
-      const r = ~n, ar = Math.abs(r), sr = r < 0 ? '-' : '';
-      return `<div class="result-row">
-        <span class="rk">~${n}</span>
-        <span class="rv">${r} &nbsp; ${sr}0x${ar.toString(16).toUpperCase()} &nbsp; ${sr}${ar.toString(2)}</span>
-      </div>`;
+      const r=~n, ar=Math.abs(r), sr=r<0?'-':'';
+      return `<div class="result-row"><span class="rk">~${n}</span><span class="rv">${r} &nbsp; ${sr}0x${ar.toString(16).toUpperCase()} &nbsp; ${sr}${ar.toString(2)}</span></div>`;
     }).join('');
     document.getElementById('multiResult').innerHTML = `<div class="result-block">${rows}</div>`;
   }
