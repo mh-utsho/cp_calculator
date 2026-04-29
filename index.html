@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Programmer Calculator</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root[data-theme="dark"] {
+  --bg:        #0d0f17;
+  --bg2:       #161925;
+  --bg3:       #1e2235;
+  --border:    #2a2f4a;
+  --border2:   #3a4068;
+  --text:      #e6e9f8;
+  --text2:     #8891c0;
+  --text3:     #454c72;
+  --accent:    #7c83f5;
+  --accent-bg: #1a1d40;
+  --warn:      #f0b429;
+  --warn-bg:   #2a2000;
+  --green:     #3ecf8e;
+  --green-bg:  #0a2018;
+  --red:       #f56565;
+  --red-bg:    #250f0f;
+  --shadow:    0 4px 32px rgba(0,0,0,0.5);
+  --shadow2:   0 2px 12px rgba(0,0,0,0.3);
+}
+
+:root[data-theme="light"] {
+  --bg:        #f0f2fa;
+  --bg2:       #ffffff;
+  --bg3:       #e8ecf7;
+  --border:    #d0d5ee;
+  --border2:   #b0b8e0;
+  --text:      #1a1d35;
+  --text2:     #4a5080;
+  --text3:     #9099c0;
+  --accent:    #4f56e8;
+  --accent-bg: #eaebfd;
+  --warn:      #b07d00;
+  --warn-bg:   #fff8e0;
+  --green:     #1a8f5f;
+  --green-bg:  #e0f7ef;
+  --red:       #c0392b;
+  --red-bg:    #fdecea;
+  --shadow:    0 4px 32px rgba(80,90,180,0.10);
+  --shadow2:   0 2px 12px rgba(80,90,180,0.07);
+}
+
+html { font-size: 16px; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'JetBrains Mono','Fira Code','Cascadia Code','Courier New',monospace;
+  min-height: 100vh;
+  transition: background 0.25s, color 0.25s;
+}
+
+/* ── LAYOUT ───────────────────────────────── */
+.app {
+  display: grid;
+  grid-template-columns: 1fr;
+  min-height: 100vh;
+  grid-template-rows: auto auto 1fr;
+}
+
+@media (min-width: 900px) {
+  .app {
+    grid-template-columns: 420px 1fr;
+    grid-template-rows: auto 1fr;
+  }
+  .app-header  { grid-column: 1 / -1; }
+  .mob-tabs    { display: none !important; }
+  .left-panel  { display: flex !important; border-right: 0.5px solid var(--border); }
+  .right-panel { display: block !important; overflow-y: auto; }
+}
+
+/* ── HEADER ───────────────────────────────── */
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.7rem 1.5rem;
+  border-bottom: 0.5px solid var(--border);
+  background: var(--bg2);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow2);
+  transition: background 0.25s;
+}
+
+.header-title {
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  color: var(--text3);
+  text-transform: uppercase;
+  font-weight: 600;
+}
+.header-title span { color: var(--accent); }
+
+/* Toggle switch */
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+}
+.toggle-label {
+  font-size: 11px;
+  color: var(--text3);
+  letter-spacing: 0.05em;
+  transition: color 0.2s;
+}
+.toggle-track {
+  width: 52px;
+  height: 26px;
+  background: var(--bg3);
+  border: 0.5px solid var(--border2);
+  border-radius: 50px;
+  position: relative;
+  transition: background 0.25s;
+  flex-shrink: 0;
+}
+[data-theme="light"] .toggle-track { background: var(--accent-bg); border-color: var(--accent); }
+.toggle-thumb {
+  position: absolute;
+  top: 3px; left: 3px;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: var(--accent);
+  transition: transform 0.25s cubic-bezier(.4,0,.2,1);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+}
+[data-theme="light"] .toggle-thumb { transform: translateX(26px); }
+
+/* ── MOBILE TABS ─────────────────────────── */
+.mob-tabs {
+  display: flex;
+  background: var(--bg2);
+  border-bottom: 0.5px solid var(--border);
+  transition: background 0.25s;
+}
+.mob-tab {
+  flex: 1;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 10px;
+  font-family: inherit;
+  font-size: 12px;
+  color: var(--text3);
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.mob-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* ── LEFT PANEL ───────────────────────────── */
+.left-panel {
+  background: var(--bg2);
+  padding: 1rem;
+  flex-direction: column;
+  gap: 10px;
+  display: none;
+  transition: background 0.25s;
+}
+.left-panel.mob-active { display: flex; }
+
+/* Display */
+.display {
+  background: var(--bg);
+  border: 0.5px solid var(--border2);
+  border-radius: 14px;
+  padding: 1rem 1.2rem;
+  transition: background 0.25s, border-color 0.25s;
+}
+.display-main {
+  font-size: clamp(24px, 6vw, 36px);
+  font-weight: 700;
+  color: var(--text);
+  word-break: break-all;
+  min-height: 46px;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+.display-expr {
+  font-size: 11px;
+  color: var(--text3);
+  min-height: 16px;
+  margin-top: 4px;
+  word-break: break-all;
+}
+.bases {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin-top: 10px;
+}
+.base-card {
+  background: var(--bg2);
+  border: 0.5px solid var(--border);
+  border-radius: 8px;
+  padding: 5px 8px;
+  transition: background 0.25s;
+}
+.base-label {
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: var(--text3);
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+.base-val {
+  font-size: 10px;
+  color: var(--text2);
+  word-break: break-all;
+  line-height: 1.4;
+}
+
+.sec-label {
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  color: var(--text3);
+  text-transform: uppercase;
+  padding: 0 2px;
+}
+
+/* Button grids */
+.btn-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 5px;
+}
+.hex-row {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 5px;
+}
+
+.btn {
+  background: var(--bg3);
+  border: 0.5px solid var(--border);
+  border-radius: 9px;
+  height: clamp(42px, 9vw, 52px);
+  font-family: inherit;
+  font-size: clamp(11px, 2.5vw, 13px);
+  color: var(--text2);
+  cursor: pointer;
+  transition: background 0.1s, transform 0.08s, border-color 0.1s;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+}
+.btn:hover  { background: var(--bg2); border-color: var(--border2); color: var(--text); }
+.btn:active { transform: scale(0.92); }
+
+.btn.num    { color: var(--text); font-size: clamp(14px,3.5vw,17px); font-weight: 600; }
+.btn.op     { color: var(--accent); border-color: var(--accent-bg); background: var(--accent-bg); }
+.btn.logic  { color: var(--warn);   border-color: var(--warn-bg);   background: var(--warn-bg); }
+.btn.shift  { color: var(--green);  border-color: var(--green-bg);  background: var(--green-bg); }
+.btn.action { color: var(--red);    border-color: var(--red-bg);    background: var(--red-bg); }
+.btn.equals {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  font-size: 20px;
+  font-weight: 700;
+}
+.btn.equals:hover { opacity: 0.88; background: var(--accent); }
+
+.ops-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.op-btn {
+  background: var(--bg3);
+  border: 0.5px solid var(--border);
+  border-radius: 8px;
+  padding: 7px 13px;
+  font-family: inherit;
+  font-size: 11px;
+  color: var(--text2);
+  cursor: pointer;
+  transition: background 0.1s, color 0.1s;
+  white-space: nowrap;
+}
+.op-btn:hover  { background: var(--bg2); border-color: var(--border2); color: var(--text); }
+.op-btn:active { transform: scale(0.95); }
+
+/* ── RIGHT PANEL ───────────────────────────── */
+.right-panel {
+  background: var(--bg);
+  padding: 1.25rem 1.5rem;
+  display: none;
+  transition: background 0.25s;
+}
+.right-panel.mob-active { display: block; }
+
+@media (min-width: 900px) {
+  .right-panel { padding: 1.5rem 2rem; }
+}
+
+.right-title {
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  color: var(--text3);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.multi-input {
+  width: 100%;
+  background: var(--bg2);
+  border: 0.5px solid var(--border2);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.15s, background 0.25s;
+  margin-bottom: 8px;
+  resize: vertical;
+  min-height: 64px;
+}
+.multi-input:focus { border-color: var(--accent); }
+.multi-input::placeholder { color: var(--text3); }
+
+.error { color: var(--red); font-size: 11px; margin-bottom: 8px; min-height: 16px; }
+
+.op-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 7px;
+  margin-bottom: 14px;
+}
+.big-op-btn {
+  background: var(--bg2);
+  border: 0.5px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 8px;
+  font-family: inherit;
+  font-size: 11px;
+  color: var(--text2);
+  cursor: pointer;
+  transition: background 0.1s, color 0.1s, border-color 0.1s;
+  text-align: center;
+  line-height: 1.4;
+}
+.big-op-btn:hover  { background: var(--bg3); border-color: var(--border2); color: var(--text); }
+.big-op-btn:active { transform: scale(0.96); }
+.big-op-btn .sym { display: block; font-size: 17px; color: var(--accent); margin-bottom: 3px; }
+
+/* Result */
+.result-block {
+  background: var(--bg2);
+  border: 0.5px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: background 0.25s;
+}
+.result-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 9px 14px;
+  border-bottom: 0.5px solid var(--border);
+  gap: 12px;
+}
+.result-row:last-child { border-bottom: none; }
+.rk { color: var(--text3); font-size: 11px; white-space: nowrap; flex-shrink: 0; }
+.rv { color: var(--text); font-size: 12px; word-break: break-all; text-align: right; }
+.rv.big { color: var(--accent); font-size: 22px; font-weight: 700; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- HEADER -->
+  <header class="app-header">
+    <div class="header-title">// <span>programmer</span> calculator</div>
+    <div class="theme-toggle" onclick="toggleTheme()" title="Toggle dark / light mode">
+      <span class="toggle-label" id="themeLabel">dark</span>
+      <div class="toggle-track">
+        <div class="toggle-thumb" id="toggleThumb">🌙</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MOBILE TABS -->
+  <div class="mob-tabs" id="mobTabs">
+    <button class="mob-tab active" onclick="mobSwitch('calc', this)">calculator</button>
+    <button class="mob-tab"        onclick="mobSwitch('multi', this)">multi-value</button>
+  </div>
+
+  <!-- LEFT: Calculator -->
+  <section class="left-panel mob-active" id="leftPanel">
+
+    <div class="display">
+      <div class="display-main" id="disp">0</div>
+      <div class="display-expr" id="exprDisp"></div>
+      <div class="bases">
+        <div class="base-card"><div class="base-label">HEX</div><div class="base-val" id="b16">0x0</div></div>
+        <div class="base-card"><div class="base-label">DEC</div><div class="base-val" id="b10">0</div></div>
+        <div class="base-card"><div class="base-label">OCT</div><div class="base-val" id="b8">0o0</div></div>
+        <div class="base-card"><div class="base-label">BIN</div><div class="base-val" id="b2">0</div></div>
+      </div>
+    </div>
+
+    <div class="sec-label">arithmetic &amp; bitwise</div>
+    <div class="btn-grid">
+      <button class="btn action" onclick="clearAll()">C</button>
+      <button class="btn action" onclick="backspace()">&#x232B;</button>
+      <button class="btn op"     onclick="inputOp('(')">(</button>
+      <button class="btn op"     onclick="inputOp(')')">)</button>
+      <button class="btn op"     onclick="inputOp('%')">%</button>
+
+      <button class="btn num"    onclick="inputDigit('7')">7</button>
+      <button class="btn num"    onclick="inputDigit('8')">8</button>
+      <button class="btn num"    onclick="inputDigit('9')">9</button>
+      <button class="btn op"     onclick="inputOp('/')">&divide;</button>
+      <button class="btn op"     onclick="inputOp('*')">&times;</button>
+
+      <button class="btn num"    onclick="inputDigit('4')">4</button>
+      <button class="btn num"    onclick="inputDigit('5')">5</button>
+      <button class="btn num"    onclick="inputDigit('6')">6</button>
+      <button class="btn op"     onclick="inputOp('-')">&minus;</button>
+      <button class="btn op"     onclick="inputOp('+')">+</button>
+
+      <button class="btn num"    onclick="inputDigit('1')">1</button>
+      <button class="btn num"    onclick="inputDigit('2')">2</button>
+      <button class="btn num"    onclick="inputDigit('3')">3</button>
+      <button class="btn logic"  onclick="inputOp('&')">&amp;</button>
+      <button class="btn logic"  onclick="inputOp('|')">|</button>
+
+      <button class="btn num"    onclick="inputDigit('0')">0</button>
+      <button class="btn op"     onclick="inputHex()">0x</button>
+      <button class="btn shift"  onclick="inputOp('<<')">&lt;&lt;</button>
+      <button class="btn shift"  onclick="inputOp('>>')">&gt;&gt;</button>
+      <button class="btn equals" onclick="calculate()">=</button>
+    </div>
+
+    <div class="sec-label">hex digits &amp; xor/not</div>
+    <div class="hex-row">
+      <button class="btn op"    onclick="inputDigit('A')">A</button>
+      <button class="btn op"    onclick="inputDigit('B')">B</button>
+      <button class="btn op"    onclick="inputDigit('C')">C</button>
+      <button class="btn op"    onclick="inputDigit('D')">D</button>
+      <button class="btn op"    onclick="inputDigit('E')">E</button>
+      <button class="btn op"    onclick="inputDigit('F')">F</button>
+    </div>
+    <div class="hex-row">
+      <button class="btn logic" onclick="inputOp('^')">XOR ^</button>
+      <button class="btn logic" onclick="doNot()">~NOT</button>
+      <button class="btn shift" onclick="doShift(1)">&lt;&lt;1</button>
+      <button class="btn shift" onclick="doShift(-1)">&gt;&gt;1</button>
+      <button class="btn logic" onclick="doNegate()">NEG</button>
+      <button class="btn logic" onclick="doBitCount()">pcnt</button>
+    </div>
+
+    <div class="sec-label">extras</div>
+    <div class="ops-row">
+      <button class="op-btn" onclick="doAbs()">ABS</button>
+      <button class="op-btn" onclick="doSquare()">x&sup2;</button>
+      <button class="op-btn" onclick="doSqrt()">&#x221A;x</button>
+      <button class="op-btn" onclick="inputOp('0b')">0b&#x2026;</button>
+      <button class="op-btn" onclick="inputOp('0o')">0o&#x2026;</button>
+    </div>
+
+  </section>
+
+  <!-- RIGHT: Multi-value -->
+  <section class="right-panel" id="rightPanel">
+    <div class="right-title">// multi-value operations</div>
+
+    <textarea class="multi-input" id="multiVals"
+      placeholder="Paste values — space, comma, or newline separated&#10;e.g.  10 30 20 30 10&#10;or    0xFF, 0b1010, 42, 0o17"></textarea>
+    <div class="error" id="multiErr"></div>
+
+    <div class="op-grid">
+      <button class="big-op-btn" onclick="multiOp('sum')">    <span class="sym">+</span>SUM</button>
+      <button class="big-op-btn" onclick="multiOp('or')">     <span class="sym">|</span>OR all</button>
+      <button class="big-op-btn" onclick="multiOp('and')">    <span class="sym">&amp;</span>AND all</button>
+      <button class="big-op-btn" onclick="multiOp('xor')">    <span class="sym">^</span>XOR all</button>
+      <button class="big-op-btn" onclick="multiOp('min')">    <span class="sym">&#x2193;</span>MIN</button>
+      <button class="big-op-btn" onclick="multiOp('max')">    <span class="sym">&#x2191;</span>MAX</button>
+      <button class="big-op-btn" onclick="multiOp('product')"><span class="sym">&times;</span>PRODUCT</button>
+      <button class="big-op-btn" onclick="multiOp('avg')">    <span class="sym">&#x2248;</span>AVG</button>
+      <button class="big-op-btn" onclick="multiOp('notall')"> <span class="sym">~</span>NOT each</button>
+    </div>
+
+    <div id="multiResult"></div>
+  </section>
+
+</div>
+
+<script>
+// ── THEME ────────────────────────────────────────────────────
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  const isDark = theme === 'dark';
+  document.getElementById('toggleThumb').textContent = isDark ? '🌙' : '☀️';
+  document.getElementById('themeLabel').textContent  = isDark ? 'dark' : 'light';
+  localStorage.setItem('pc-theme', theme);
+}
+
+function toggleTheme() {
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  applyTheme(isDark ? 'light' : 'dark');
+}
+
+// Load saved theme
+applyTheme(localStorage.getItem('pc-theme') || 'dark');
+
+// ── MOBILE TABS ──────────────────────────────────────────────
+function mobSwitch(tab, btn) {
+  document.querySelectorAll('.mob-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('leftPanel').classList.toggle('mob-active',  tab === 'calc');
+  document.getElementById('rightPanel').classList.toggle('mob-active', tab === 'multi');
+}
+
+// ── CALCULATOR ───────────────────────────────────────────────
+let expr = '';
+let justCalc = false;
+
+function updateDisplay(val) {
+  const n = Math.trunc(Number(val));
+  document.getElementById('disp').textContent = n.toLocaleString();
+  document.getElementById('b10').textContent  = n.toString();
+  const abs = Math.abs(n), s = n < 0 ? '-' : '';
+  document.getElementById('b16').textContent = s + '0x' + abs.toString(16).toUpperCase();
+  document.getElementById('b8').textContent  = s + '0o' + abs.toString(8);
+  document.getElementById('b2').textContent  = s + abs.toString(2);
+}
+
+function parseExpr(e) {
+  return e
+    .replace(/0x([0-9a-fA-F]+)/gi, (_, h) => parseInt(h, 16))
+    .replace(/0b([01]+)/gi,         (_, b) => parseInt(b, 2))
+    .replace(/0o([0-7]+)/gi,        (_, o) => parseInt(o, 8));
+}
+
+function tryPreview() {
+  try {
+    const r = Function('"use strict"; return (' + parseExpr(expr) + ')')();
+    if (isFinite(r)) updateDisplay(r);
+  } catch (_) {}
+}
+
+function setExprDisp(txt) {
+  document.getElementById('exprDisp').textContent = txt;
+}
+
+function inputDigit(d) {
+  if (justCalc) { expr = ''; justCalc = false; }
+  expr += d;
+  setExprDisp(expr);
+  tryPreview();
+}
+
+function inputHex() {
+  if (justCalc) { expr = ''; justCalc = false; }
+  expr += '0x';
+  setExprDisp(expr);
+}
+
+function inputOp(op) {
+  if (justCalc) justCalc = false;
+  expr += op;
+  setExprDisp(expr);
+}
+
+function backspace() {
+  expr = expr.slice(0, -1);
+  setExprDisp(expr);
+  if (!expr) updateDisplay(0); else tryPreview();
+}
+
+function clearAll() {
+  expr = ''; justCalc = false;
+  setExprDisp('');
+  updateDisplay(0);
+}
+
+function calculate() {
+  try {
+    const result = Math.trunc(Function('"use strict"; return (' + parseExpr(expr) + ')')());
+    updateDisplay(result);
+    setExprDisp(expr + '  =  ' + result);
+    expr = result.toString();
+    justCalc = true;
+  } catch (_) {
+    setExprDisp('// syntax error');
+  }
+}
+
+// Keyboard support
+document.addEventListener('keydown', e => {
+  const tag = document.activeElement.tagName;
+  if (tag === 'TEXTAREA' || tag === 'INPUT') return;
+  if ('0123456789'.includes(e.key))          { e.preventDefault(); inputDigit(e.key); return; }
+  if ('ABCDEFabcdef'.includes(e.key))        { e.preventDefault(); inputDigit(e.key.toUpperCase()); return; }
+  if (['+','-','*','/','%','&','|','^','(',')',' '].includes(e.key)) { e.preventDefault(); inputOp(e.key); return; }
+  if (e.key === 'Enter' || e.key === '=')    { e.preventDefault(); calculate(); return; }
+  if (e.key === 'Backspace')                 { e.preventDefault(); backspace(); return; }
+  if (e.key === 'Escape')                    { e.preventDefault(); clearAll(); return; }
+  if (e.key === '~')                         { e.preventDefault(); doNot(); return; }
+});
+
+function getCurrent() {
+  try { return Math.trunc(Function('"use strict"; return (' + parseExpr(expr || '0') + ')')());
+  } catch (_) { return 0; } }
+
+function doNot() {
+  const v = getCurrent(), r = ~v;
+  expr = r.toString(); updateDisplay(r);
+  setExprDisp('~' + v + '  =  ' + r); justCalc = true; }
+
+function doShift(dir) {
+  const v = getCurrent(), r = dir > 0 ? v << 1 : v >> 1;
+  expr = r.toString(); updateDisplay(r);
+  setExprDisp(v + (dir > 0 ? ' << 1' : ' >> 1') + '  =  ' + r); justCalc = true; }
+
+function doAbs() {
+  const v = getCurrent(), r = Math.abs(v);
+  expr = r.toString(); updateDisplay(r);
+  setExprDisp('|' + v + '|  =  ' + r); justCalc = true; }
+
+function doNegate() {
+  const v = getCurrent(), r = -v;
+  expr = r.toString(); updateDisplay(r);
+  setExprDisp('-(' + v + ')  =  ' + r); justCalc = true; }
+
+function doBitCount() {
+  const v = Math.abs(getCurrent());
+  const r = v.toString(2).split('').filter(b => b === '1').length;
+  setExprDisp('popcount(' + v + ')  =  ' + r + ' bits set'); }
+
+function doSquare() {
+  const v = getCurrent(), r = v * v;
+  expr = r.toString(); updateDisplay(r);
+  setExprDisp(v + '\xb2  =  ' + r); justCalc = true; }
+
+function doSqrt() {
+  const v = getCurrent();
+  if (v < 0) { setExprDisp('// cannot sqrt negative'); return; }
+  const r = Math.trunc(Math.sqrt(v));
+  expr = r.toString(); updateDisplay(r);
+  setExprDisp('\u221a' + v + '  \u2248  ' + r + ' (int)'); justCalc = true; }
+
+// ── MULTI-VALUE ───────────────────────────────────────────────
+function parseVals(raw) {
+  return raw.trim().split(/[\s,;\n]+/).filter(Boolean).map(tok => {
+    if (/^0x/i.test(tok)) return parseInt(tok.slice(2), 16);
+    if (/^0b/i.test(tok)) return parseInt(tok.slice(2), 2);
+    if (/^0o/i.test(tok)) return parseInt(tok.slice(2), 8);
+    return parseInt(tok, 10);
+  });
+}
+
+function fmtResult(label, result, nums, sym) {
+  const abs = Math.abs(result), s = result < 0 ? '-' : '';
+  const hex = s + '0x' + abs.toString(16).toUpperCase();
+  const bin = s + abs.toString(2);
+  const es  = nums.length <= 8
+    ? nums.join(' ' + sym + ' ')
+    : nums.slice(0,3).join(' '+sym+' ') + ' ... ' + nums.slice(-2).join(' '+sym+' ');
+  document.getElementById('multiResult').innerHTML = `
+    <div class="result-block">
+      <div class="result-row"><span class="rk">${label}</span><span class="rv big">${result.toLocaleString()}</span></div>
+      <div class="result-row"><span class="rk">hex</span><span class="rv">${hex}</span></div>
+      <div class="result-row"><span class="rk">bin</span><span class="rv">${bin}</span></div>
+      <div class="result-row"><span class="rk">expression</span><span class="rv">${es} = ${result}</span></div>
+      <div class="result-row"><span class="rk">count</span><span class="rv">${nums.length} values</span></div>
+    </div>`;
+}
+
+function multiOp(op) {
+  const raw = document.getElementById('multiVals').value;
+  const err = document.getElementById('multiErr');
+  err.textContent = '';
+  let nums;
+  try { nums = parseVals(raw); } catch (_) { err.textContent = '// parse error'; return; }
+  if (!nums.length || nums.some(isNaN)) { err.textContent = '// invalid or empty values'; return; }
+
+  if (op === 'sum')     return fmtResult('SUM',     nums.reduce((a,b)=>a+b,0),          nums, '+');
+  if (op === 'or')      return fmtResult('OR',      nums.reduce((a,b)=>a|b,0),          nums, '|');
+  if (op === 'and')     return fmtResult('AND',     nums.reduce((a,b)=>a&b,nums[0]),     nums, '&');
+  if (op === 'xor')     return fmtResult('XOR',     nums.reduce((a,b)=>a^b,0),          nums, '^');
+  if (op === 'min')     return fmtResult('MIN',     Math.min(...nums),                   nums, 'min');
+  if (op === 'max')     return fmtResult('MAX',     Math.max(...nums),                   nums, 'max');
+  if (op === 'product') return fmtResult('PRODUCT', nums.reduce((a,b)=>a*b,1),          nums, '\xd7');
+  if (op === 'avg')     return fmtResult('AVG',     Math.round(nums.reduce((a,b)=>a+b,0)/nums.length), nums, '+');
+  if (op === 'notall') {
+    const rows = nums.map(n => {
+      const r = ~n, ar = Math.abs(r), sr = r < 0 ? '-' : '';
+      return `<div class="result-row">
+        <span class="rk">~${n}</span>
+        <span class="rv">${r} &nbsp; ${sr}0x${ar.toString(16).toUpperCase()} &nbsp; ${sr}${ar.toString(2)}</span>
+      </div>`;
+    }).join('');
+    document.getElementById('multiResult').innerHTML = `<div class="result-block">${rows}</div>`;
+  }
+}
+
+updateDisplay(0);
+</script>
+</body>
+</html>
