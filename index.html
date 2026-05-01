@@ -70,7 +70,7 @@ body{background:var(--bg);color:var(--text);font-family:'JetBrains Mono','Fira C
 .sec-label{font-size:7px;letter-spacing:.1em;color:var(--text3);text-transform:uppercase;flex-shrink:0;padding:0 2px;line-height:1}
 .btn-area{display:flex;flex-direction:column;gap:3px;flex:1;min-height:0}
 .btn-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:3px;flex:4;min-height:0}
-.btn-grid-last{display:grid;grid-template-columns:repeat(6,1fr);gap:3px;flex:1;min-height:0}
+.btn-grid-last{display:grid;grid-template-columns:repeat(5,1fr);gap:3px;flex:1;min-height:0}
 .hex-row{display:grid;grid-template-columns:repeat(6,1fr);gap:3px;flex:1;min-height:0}
 .extras-row{display:grid;grid-template-columns:repeat(6,1fr);gap:3px;flex:1;min-height:0}
 
@@ -127,7 +127,7 @@ body{background:var(--bg);color:var(--text);font-family:'JetBrains Mono','Fira C
   .btn:hover{background:var(--bg2)!important;border-color:var(--border2)!important;color:var(--text)!important;opacity:1!important}
   .btn.equals:hover{background:var(--accent)!important;opacity:.88!important}
   .btn-grid{gap:6px}
-  .btn-grid-last{gap:6px}
+  .btn-grid-last{gap:6px;grid-template-columns:repeat(5,1fr)}
   .hex-row{gap:6px}
   .extras-row{gap:6px}
   .combo-box{padding:11px 14px;border-radius:12px}
@@ -250,7 +250,6 @@ body{background:var(--bg);color:var(--text);font-family:'JetBrains Mono','Fira C
       <div class="btn-grid-last">
         <button class="btn num"    onclick="inputDigit('0')">0</button>
         <button class="btn num"    onclick="inputDot()">.</button>
-        <button class="btn op"     onclick="inputOp('**')">x&#x02b8;</button>
         <button class="btn shift"  onclick="inputOp('<<')">&lt;&lt;</button>
         <button class="btn shift"  onclick="inputOp('>>')">&gt;&gt;</button>
         <button class="btn equals" onclick="calculate()">=</button>
