@@ -1,424 +1,214 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
 <title>Programmer Calculator</title>
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
-:root[data-theme="dark"] {
-  --bg:        #0d0f17;
-  --bg2:       #161925;
-  --bg3:       #1e2235;
-  --border:    #2a2f4a;
-  --border2:   #3a4068;
-  --text:      #e6e9f8;
-  --text2:     #8891c0;
-  --text3:     #454c72;
-  --accent:    #7c83f5;
-  --accent-bg: #1a1d40;
-  --warn:      #f0b429;
-  --warn-bg:   #2a2000;
-  --green:     #3ecf8e;
-  --green-bg:  #0a2018;
-  --red:       #f56565;
-  --red-bg:    #250f0f;
-  --purple:    #c084fc;
-  --purple-bg: #2a1040;
-  --shadow2:   0 2px 12px rgba(0,0,0,0.35);
+:root[data-theme="dark"]{
+  --bg:#0d0f17;--bg2:#161925;--bg3:#1e2235;
+  --border:#2a2f4a;--border2:#3a4068;
+  --text:#e6e9f8;--text2:#8891c0;--text3:#454c72;
+  --accent:#7c83f5;--accent-bg:#1a1d40;
+  --warn:#f0b429;--warn-bg:#2a2000;
+  --green:#3ecf8e;--green-bg:#0a2018;
+  --red:#f56565;--red-bg:#250f0f;
+  --purple:#c084fc;--purple-bg:#2a1040;
+  --shadow2:0 2px 12px rgba(0,0,0,.35);
 }
-:root[data-theme="light"] {
-  --bg:        #f0f2fa;
-  --bg2:       #ffffff;
-  --bg3:       #e8ecf7;
-  --border:    #d0d5ee;
-  --border2:   #b0b8e0;
-  --text:      #1a1d35;
-  --text2:     #4a5080;
-  --text3:     #9099c0;
-  --accent:    #4f56e8;
-  --accent-bg: #eaebfd;
-  --warn:      #b07d00;
-  --warn-bg:   #fff8e0;
-  --green:     #1a8f5f;
-  --green-bg:  #e0f7ef;
-  --red:       #c0392b;
-  --red-bg:    #fdecea;
-  --purple:    #9333ea;
-  --purple-bg: #f3e8ff;
-  --shadow2:   0 2px 12px rgba(80,90,180,0.08);
+:root[data-theme="light"]{
+  --bg:#f0f2fa;--bg2:#ffffff;--bg3:#e8ecf7;
+  --border:#d0d5ee;--border2:#b0b8e0;
+  --text:#1a1d35;--text2:#4a5080;--text3:#9099c0;
+  --accent:#4f56e8;--accent-bg:#eaebfd;
+  --warn:#b07d00;--warn-bg:#fff8e0;
+  --green:#1a8f5f;--green-bg:#e0f7ef;
+  --red:#c0392b;--red-bg:#fdecea;
+  --purple:#9333ea;--purple-bg:#f3e8ff;
+  --shadow2:0 2px 12px rgba(80,90,180,.08);
 }
 
-html, body { height: 100%; }
+html,body{height:100%}
+body{background:var(--bg);color:var(--text);font-family:'JetBrains Mono','Fira Code','Cascadia Code','Courier New',monospace;transition:background .25s,color .25s;-webkit-tap-highlight-color:transparent}
 
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'JetBrains Mono','Fira Code','Cascadia Code','Courier New',monospace;
-  transition: background 0.25s, color 0.25s;
-  -webkit-tap-highlight-color: transparent;
+/* ── HEADER ─────────────────────────────── */
+.app-header{display:flex;align-items:center;justify-content:space-between;padding:0 1rem;height:44px;border-bottom:.5px solid var(--border);background:var(--bg2);position:sticky;top:0;z-index:200;box-shadow:var(--shadow2);transition:background .25s}
+.header-title{font-size:11px;letter-spacing:.16em;color:var(--text3);text-transform:uppercase;font-weight:600}
+.header-title span{color:var(--accent)}
+.theme-toggle{display:flex;align-items:center;gap:7px;cursor:pointer;user-select:none}
+.toggle-label{font-size:11px;color:var(--text3)}
+.toggle-track{width:48px;height:24px;background:var(--bg3);border:.5px solid var(--border2);border-radius:50px;position:relative;transition:background .25s;flex-shrink:0}
+[data-theme="light"] .toggle-track{background:var(--accent-bg);border-color:var(--accent)}
+.toggle-thumb{position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:var(--accent);transition:transform .25s cubic-bezier(.4,0,.2,1);display:flex;align-items:center;justify-content:center;font-size:9px;box-shadow:0 1px 4px rgba(0,0,0,.3)}
+[data-theme="light"] .toggle-thumb{transform:translateX(24px)}
+
+/* ── MOBILE TABS ─────────────────────────── */
+.mob-tabs{display:flex;background:var(--bg2);border-bottom:.5px solid var(--border);transition:background .25s}
+.mob-tab{flex:1;background:none;border:none;border-bottom:2px solid transparent;padding:9px 4px;font-family:inherit;font-size:11px;color:var(--text3);cursor:pointer;transition:color .15s,border-color .15s;letter-spacing:.06em;text-transform:uppercase}
+.mob-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+
+/* ── MOBILE LEFT PANEL ───────────────────── */
+.left-panel{display:none;flex-direction:column;background:var(--bg2);transition:background .25s;height:calc(100dvh - 84px);overflow:hidden;padding:6px 8px;gap:5px}
+.left-panel.mob-active{display:flex}
+.right-panel{display:none;background:var(--bg);transition:background .25s;height:calc(100dvh - 84px);overflow-y:auto;padding:12px}
+.right-panel.mob-active{display:block}
+
+/* ── DISPLAY ─────────────────────────────── */
+.display{background:var(--bg);border:.5px solid var(--border2);border-radius:12px;padding:7px 11px 8px;flex-shrink:0;transition:background .25s}
+.display-main{font-size:clamp(20px,7vw,30px);font-weight:700;color:var(--text);word-break:break-all;line-height:1.15;min-height:28px;letter-spacing:-.02em}
+.display-expr{font-size:clamp(14px,4.5vw,20px);color:var(--text2);font-weight:500;min-height:22px;margin-top:4px;word-break:break-all;line-height:1.2}
+.display-frac{font-size:clamp(11px,3vw,14px);color:var(--purple);min-height:16px;margin-top:3px;word-break:break-all;letter-spacing:.02em}
+.display-sci{font-size:clamp(11px,3vw,14px);color:var(--green);min-height:16px;margin-top:2px}
+.bases{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-top:6px}
+.base-card{background:var(--bg2);border:.5px solid var(--border);border-radius:6px;padding:4px 6px;transition:background .25s}
+.base-label{font-size:8px;letter-spacing:.1em;color:var(--text3);text-transform:uppercase;margin-bottom:1px}
+.base-val{font-size:9px;color:var(--text2);word-break:break-all;line-height:1.3}
+
+/* ── BUTTON AREA ─────────────────────────── */
+.sec-label{font-size:8px;letter-spacing:.1em;color:var(--text3);text-transform:uppercase;flex-shrink:0;padding:0 2px}
+.btn-area{display:flex;flex-direction:column;gap:4px;flex:1;min-height:0}
+.btn-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;flex:4;min-height:0}
+.btn-grid-last{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;flex:1;min-height:0}
+.hex-row{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;flex:1;min-height:0}
+.extras-row{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;flex:1;min-height:0}
+
+.btn{background:var(--bg3);border:.5px solid var(--border);border-radius:8px;width:100%;height:100%;min-height:36px;font-family:inherit;font-size:clamp(10px,3.2vw,13px);color:var(--text2);cursor:pointer;transition:background .08s,transform .06s;user-select:none;-webkit-user-select:none;display:flex;align-items:center;justify-content:center;white-space:nowrap;padding:0 2px;touch-action:manipulation}
+.btn:active{transform:scale(.91);background:var(--border2)}
+.btn.num{color:var(--text);font-size:clamp(13px,4vw,16px);font-weight:700;background:var(--bg2);border-color:var(--border2)}
+.btn.op{color:var(--accent);border-color:var(--accent-bg);background:var(--accent-bg)}
+.btn.logic{color:var(--warn);border-color:var(--warn-bg);background:var(--warn-bg)}
+.btn.shift{color:var(--green);border-color:var(--green-bg);background:var(--green-bg)}
+.btn.action{color:var(--red);border-color:var(--red-bg);background:var(--red-bg)}
+.btn.comb{color:var(--purple);border-color:var(--purple-bg);background:var(--purple-bg)}
+.btn.equals{background:var(--accent);border-color:var(--accent);color:#fff;font-size:clamp(16px,4.5vw,20px);font-weight:700}
+.btn.equals:active{opacity:.85;transform:scale(.91)}
+
+/* ── COMBINATORICS BOX ───────────────────── */
+.combo-box{background:var(--bg);border:.5px solid var(--border);border-radius:9px;padding:7px 9px;flex-shrink:0}
+.combo-inputs{display:flex;gap:6px;align-items:center;margin-bottom:5px}
+.combo-field{flex:1;background:var(--bg2);border:.5px solid var(--border2);border-radius:6px;padding:5px 8px;font-family:inherit;font-size:12px;color:var(--text);outline:none;transition:border-color .15s;min-width:0}
+.combo-field:focus{border-color:var(--accent)}
+.combo-field::placeholder{color:var(--text3)}
+.combo-label{font-size:10px;color:var(--text3);white-space:nowrap}
+.combo-btns{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+.combo-btn{background:var(--purple-bg);border:.5px solid var(--purple);border-radius:6px;padding:5px 6px;font-family:inherit;font-size:10px;color:var(--purple);cursor:pointer;transition:opacity .1s;touch-action:manipulation;text-align:center}
+.combo-btn:active{opacity:.7;transform:scale(.95)}
+/* ─── BIGGER COMBO RESULT ─── */
+.combo-result{margin-top:7px;word-break:break-all;line-height:1.5}
+.combo-result-label{font-size:11px;color:var(--text3)}
+.combo-result-val{font-size:clamp(16px,4vw,22px);font-weight:700;color:var(--purple);word-break:break-all;line-height:1.3;margin:2px 0}
+.combo-result-meta{font-size:9px;color:var(--text3)}
+
+/* ── DESKTOP ≥960px ──────────────────────── */
+@media(min-width:960px){
+  body{height:100vh;overflow:hidden}
+  .mob-tabs{display:none!important}
+  .app-header{height:52px;padding:0 2rem}
+  .header-title{font-size:13px;letter-spacing:.2em}
+  .toggle-label{font-size:12px}
+  .pc-layout{display:grid;grid-template-columns:minmax(480px,48%) 1fr;height:calc(100vh - 52px)}
+  .left-panel{display:flex!important;height:100%;border-right:.5px solid var(--border);padding:16px 18px;gap:10px;overflow:hidden}
+  .display{padding:14px 18px 16px;border-radius:16px}
+  .display-main{font-size:clamp(28px,2.8vw,44px);min-height:52px;letter-spacing:-.03em}
+  .display-expr{font-size:clamp(18px,1.8vw,26px);min-height:30px;margin-top:6px}
+  .display-frac{font-size:clamp(13px,1.1vw,16px);min-height:20px;margin-top:3px}
+  .display-sci{font-size:clamp(13px,1.1vw,16px);min-height:20px;margin-top:2px}
+  .bases{gap:8px;margin-top:10px}
+  .base-card{padding:7px 10px;border-radius:9px}
+  .base-label{font-size:10px;margin-bottom:3px}
+  .base-val{font-size:11px}
+  .sec-label{font-size:10px;letter-spacing:.12em}
+  .btn-area{gap:6px}
+  .btn{border-radius:10px;font-size:clamp(12px,1.05vw,14px);min-height:0}
+  .btn.num{font-size:clamp(15px,1.4vw,18px)}
+  .btn.equals{font-size:clamp(20px,1.8vw,24px)}
+  .btn:hover{background:var(--bg2)!important;border-color:var(--border2)!important;color:var(--text)!important;opacity:1!important}
+  .btn.equals:hover{background:var(--accent)!important;opacity:.88!important}
+  .btn-grid{gap:6px}
+  .btn-grid-last{gap:6px}
+  .hex-row{gap:6px}
+  .extras-row{gap:6px}
+  .combo-box{padding:11px 14px;border-radius:12px}
+  .combo-inputs{gap:10px;margin-bottom:8px}
+  .combo-field{font-size:13px;padding:7px 10px;border-radius:8px}
+  .combo-label{font-size:12px}
+  .combo-btns{grid-template-columns:1fr 1fr;gap:6px}
+  .combo-btn{font-size:12px;padding:8px 10px;border-radius:8px}
+  .combo-result-label{font-size:12px}
+  .combo-result-val{font-size:clamp(20px,2.2vw,28px)}
+  .combo-result-meta{font-size:10px}
+  .right-panel{display:block!important;height:100%;overflow-y:auto;padding:1.75rem 2.25rem}
+  .right-title{font-size:12px;margin-bottom:10px}
+  .multi-input{font-size:14px;min-height:80px;padding:12px 16px}
+  .op-grid{grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:9px;margin-bottom:14px}
+  .big-op-btn{font-size:13px;padding:12px 8px;border-radius:11px}
+  .big-op-btn .sym{font-size:20px;margin-bottom:4px}
+  .sort-row{gap:10px;margin-bottom:14px}
+  .sort-btn{font-size:14px;padding:12px 10px;border-radius:11px}
+  .sort-btn .sym{font-size:22px;margin-bottom:3px}
+  .result-block{border-radius:13px}
+  .result-row{padding:12px 18px}
+  .rk{font-size:14px}
+  .rv{font-size:15px}
+  .rv.big{font-size:32px}
+  .rv.sort-val{font-size:15px}
 }
 
-/* ═══════════════════════════════════════════
-   HEADER
-═══════════════════════════════════════════ */
-.app-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 1rem;
-  height: 44px;
-  border-bottom: 0.5px solid var(--border);
-  background: var(--bg2);
-  position: sticky;
-  top: 0;
-  z-index: 200;
-  box-shadow: var(--shadow2);
-  transition: background 0.25s;
-}
-.header-title { font-size: 11px; letter-spacing: 0.16em; color: var(--text3); text-transform: uppercase; font-weight: 600; }
-.header-title span { color: var(--accent); }
+/* ── RIGHT PANEL ─────────────────────────── */
+.right-title{font-size:10px;letter-spacing:.15em;color:var(--text3);text-transform:uppercase;margin-bottom:8px}
+.multi-input{width:100%;background:var(--bg2);border:.5px solid var(--border2);border-radius:10px;padding:9px 12px;font-family:inherit;font-size:12px;color:var(--text);outline:none;transition:border-color .15s,background .25s;margin-bottom:6px;resize:vertical;min-height:60px}
+.multi-input:focus{border-color:var(--accent)}
+.multi-input::placeholder{color:var(--text3)}
+.error{color:var(--red);font-size:11px;margin-bottom:6px;min-height:14px}
+.op-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px}
+.big-op-btn{background:var(--bg2);border:.5px solid var(--border);border-radius:9px;padding:8px 5px;font-family:inherit;font-size:11px;color:var(--text2);cursor:pointer;transition:background .1s,color .1s;text-align:center;line-height:1.4;touch-action:manipulation}
+.big-op-btn:active{background:var(--bg3)}
+.big-op-btn .sym{display:block;font-size:15px;color:var(--accent);margin-bottom:2px}
+.sort-row{display:flex;gap:8px;margin-bottom:10px}
+.sort-btn{flex:1;background:var(--bg2);border:.5px solid var(--border);border-radius:9px;padding:8px 6px;font-family:inherit;font-size:11px;color:var(--text2);cursor:pointer;transition:background .1s,color .1s;text-align:center;touch-action:manipulation}
+.sort-btn:active{background:var(--bg3)}
+.sort-btn .sym{display:block;font-size:16px;color:var(--green);margin-bottom:2px}
+.result-block{background:var(--bg2);border:.5px solid var(--border);border-radius:11px;overflow:hidden;transition:background .25s}
+.result-row{display:flex;justify-content:space-between;align-items:baseline;padding:13px 18px;border-bottom:.5px solid var(--border);gap:10px}
+.result-row:last-child{border-bottom:none}
+.rk{color:var(--text3);font-size:15px;white-space:nowrap;flex-shrink:0}
+.rv{color:var(--text);font-size:16px;word-break:break-all;text-align:right}
+.rv.big{color:var(--accent);font-size:32px;font-weight:700}
+.rv.sort-val{color:var(--green);font-size:16px}
+.rv.mex-val{color:var(--purple);font-size:28px;font-weight:700}
 
-.theme-toggle { display: flex; align-items: center; gap: 7px; cursor: pointer; user-select: none; }
-.toggle-label { font-size: 11px; color: var(--text3); }
-.toggle-track { width: 48px; height: 24px; background: var(--bg3); border: 0.5px solid var(--border2); border-radius: 50px; position: relative; transition: background 0.25s; flex-shrink: 0; }
-[data-theme="light"] .toggle-track { background: var(--accent-bg); border-color: var(--accent); }
-.toggle-thumb { position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: var(--accent); transition: transform 0.25s cubic-bezier(.4,0,.2,1); display: flex; align-items: center; justify-content: center; font-size: 9px; box-shadow: 0 1px 4px rgba(0,0,0,0.3); }
-[data-theme="light"] .toggle-thumb { transform: translateX(24px); }
-
-/* ═══════════════════════════════════════════
-   MOBILE TABS
-═══════════════════════════════════════════ */
-.mob-tabs { display: flex; background: var(--bg2); border-bottom: 0.5px solid var(--border); transition: background 0.25s; }
-.mob-tab { flex: 1; background: none; border: none; border-bottom: 2px solid transparent; padding: 9px 4px; font-family: inherit; font-size: 11px; color: var(--text3); cursor: pointer; transition: color 0.15s, border-color 0.15s; letter-spacing: 0.06em; text-transform: uppercase; }
-.mob-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
-
-/* ═══════════════════════════════════════════
-   MOBILE LAYOUT  (< 960px)
-   Calculator panel fills viewport height
-   Buttons use vh-based sizing so nothing overflows
-═══════════════════════════════════════════ */
-.left-panel {
-  display: none;
-  flex-direction: column;
-  background: var(--bg2);
-  transition: background 0.25s;
-  /* On mobile: fill remaining viewport after header (44px) + tabs (40px) = 84px */
-  height: calc(100dvh - 84px);
-  overflow: hidden;
-  padding: 6px 8px 6px;
-  gap: 5px;
-}
-.left-panel.mob-active { display: flex; }
-
-.right-panel {
-  display: none;
-  background: var(--bg);
-  transition: background 0.25s;
-  height: calc(100dvh - 84px);
-  overflow-y: auto;
-  padding: 12px;
-}
-.right-panel.mob-active { display: block; }
-
-/* ── Display ── */
-.display {
-  background: var(--bg);
-  border: 0.5px solid var(--border2);
-  border-radius: 12px;
-  padding: 7px 11px 8px;
-  flex-shrink: 0;
-  transition: background 0.25s;
-}
-.display-main {
-  font-size: clamp(20px, 7vw, 30px);
-  font-weight: 700;
-  color: var(--text);
-  word-break: break-all;
-  line-height: 1.15;
-  min-height: 28px;
-  letter-spacing: -0.02em;
-}
-.display-expr {
-  font-size: 10px;
-  color: var(--text3);
-  min-height: 14px;
-  margin-top: 2px;
-  word-break: break-all;
-}
-.bases {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 4px;
-  margin-top: 6px;
-}
-.base-card { background: var(--bg2); border: 0.5px solid var(--border); border-radius: 6px; padding: 4px 6px; transition: background 0.25s; }
-.base-label { font-size: 8px; letter-spacing: 0.1em; color: var(--text3); text-transform: uppercase; margin-bottom: 1px; }
-.base-val { font-size: 9px; color: var(--text2); word-break: break-all; line-height: 1.3; }
-
-/* ── Section labels ── */
-.sec-label { font-size: 8px; letter-spacing: 0.1em; color: var(--text3); text-transform: uppercase; flex-shrink: 0; padding: 0 2px; }
-
-/* ── Button grids ──
-   Mobile: height is 1fr of a flex container = auto-fit to remaining space
-   We use a CSS custom property trick: all btn-grids are flex children
-   and we assign flex-grow so they share vertical space evenly.
-*/
-.btn-area {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  flex: 1;          /* grow to fill remaining space */
-  min-height: 0;    /* allow shrink below content size */
-}
-
-.btn-grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 4px;
-  flex: 5;          /* 5 rows weight */
-  min-height: 0;
-}
-.hex-row {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 4px;
-  flex: 1;
-  min-height: 0;
-}
-.extras-row {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 4px;
-  flex: 1;
-  min-height: 0;
-}
-
-/* ── Buttons ── */
-.btn {
-  background: var(--bg3);
-  border: 0.5px solid var(--border);
-  border-radius: 8px;
-  width: 100%;
-  height: 100%;        /* fills grid cell height */
-  min-height: 36px;
-  font-family: inherit;
-  font-size: clamp(10px, 3.2vw, 13px);
-  color: var(--text2);
-  cursor: pointer;
-  transition: background 0.08s, transform 0.06s;
-  user-select: none;
-  -webkit-user-select: none;
-  display: flex; align-items: center; justify-content: center;
-  white-space: nowrap;
-  padding: 0 2px;
-  touch-action: manipulation;
-}
-.btn:active { transform: scale(0.91); background: var(--border2); }
-
-.btn.num    { color: var(--text); font-size: clamp(13px, 4vw, 16px); font-weight: 700; background: var(--bg2); border-color: var(--border2); }
-.btn.op     { color: var(--accent); border-color: var(--accent-bg); background: var(--accent-bg); }
-.btn.logic  { color: var(--warn);   border-color: var(--warn-bg);   background: var(--warn-bg); }
-.btn.shift  { color: var(--green);  border-color: var(--green-bg);  background: var(--green-bg); }
-.btn.action { color: var(--red);    border-color: var(--red-bg);    background: var(--red-bg); }
-.btn.comb   { color: var(--purple); border-color: var(--purple-bg); background: var(--purple-bg); }
-.btn.equals { background: var(--accent); border-color: var(--accent); color: #fff; font-size: clamp(16px,4.5vw,20px); font-weight: 700; }
-.btn.equals:active { opacity: 0.85; transform: scale(0.91); }
-
-/* ── Combinatorics box ── */
-.combo-box {
-  background: var(--bg);
-  border: 0.5px solid var(--border);
-  border-radius: 9px;
-  padding: 7px 9px;
-  flex-shrink: 0;
-}
-.combo-inputs { display: flex; gap: 6px; align-items: center; margin-bottom: 5px; }
-.combo-field {
-  flex: 1; background: var(--bg2); border: 0.5px solid var(--border2); border-radius: 6px;
-  padding: 5px 8px; font-family: inherit; font-size: 12px; color: var(--text); outline: none;
-  transition: border-color 0.15s; min-width: 0;
-}
-.combo-field:focus { border-color: var(--accent); }
-.combo-field::placeholder { color: var(--text3); }
-.combo-label { font-size: 10px; color: var(--text3); white-space: nowrap; }
-.combo-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
-.combo-btn {
-  background: var(--purple-bg); border: 0.5px solid var(--purple); border-radius: 6px;
-  padding: 5px 6px; font-family: inherit; font-size: 10px; color: var(--purple);
-  cursor: pointer; transition: opacity 0.1s; touch-action: manipulation; text-align: center;
-}
-.combo-btn:active { opacity: 0.7; transform: scale(0.95); }
-.combo-result { font-size: 11px; color: var(--text2); margin-top: 5px; word-break: break-all; line-height: 1.4; }
-.combo-result b { color: var(--purple); }
-
-/* ═══════════════════════════════════════════
-   DESKTOP LAYOUT  (≥ 960px)
-   Two-column, PC full-screen optimised
-═══════════════════════════════════════════ */
-@media (min-width: 960px) {
-  body { height: 100vh; overflow: hidden; }
-
-  .mob-tabs  { display: none !important; }
-
-  .app-header { height: 52px; padding: 0 2rem; }
-  .header-title { font-size: 13px; letter-spacing: 0.2em; }
-  .toggle-label { font-size: 12px; }
-
-  /* 48% left / 52% right — balanced, not squished into a corner */
-  .pc-layout {
-    display: grid;
-    grid-template-columns: minmax(480px, 48%) 1fr;
-    height: calc(100vh - 52px);
-  }
-
-  /* Left: fills column, comfortable padding, no overflow */
-  .left-panel {
-    display: flex !important;
-    height: 100%;
-    border-right: 0.5px solid var(--border);
-    padding: 16px 18px 16px;
-    gap: 10px;
-    overflow: hidden;
-  }
-
-  /* Display bigger & more spacious */
-  .display { padding: 14px 18px 16px; border-radius: 16px; }
-  .display-main { font-size: clamp(28px, 2.8vw, 44px); min-height: 52px; letter-spacing: -0.03em; }
-  .display-expr { font-size: 12px; min-height: 18px; margin-top: 5px; }
-  .bases { gap: 8px; margin-top: 10px; }
-  .base-card { padding: 7px 10px; border-radius: 9px; }
-  .base-label { font-size: 10px; margin-bottom: 3px; }
-  .base-val { font-size: 11px; }
-
-  .sec-label { font-size: 10px; letter-spacing: 0.12em; }
-
-  /* Buttons: bigger text, gaps, nice height via flex */
-  .btn-area { gap: 6px; }
-  .btn { border-radius: 10px; font-size: clamp(12px, 1.05vw, 14px); min-height: 0; }
-  .btn.num { font-size: clamp(15px, 1.4vw, 18px); }
-  .btn.equals { font-size: clamp(20px, 1.8vw, 24px); }
-  .btn:hover { background: var(--bg2) !important; border-color: var(--border2) !important; color: var(--text) !important; opacity: 1 !important; }
-  .btn.equals:hover { background: var(--accent) !important; opacity: 0.88 !important; }
-
-  .btn-grid { gap: 6px; }
-  .hex-row  { gap: 6px; }
-  .extras-row { gap: 6px; }
-
-  /* Combinatorics box */
-  .combo-box { padding: 11px 14px; border-radius: 12px; }
-  .combo-inputs { gap: 10px; margin-bottom: 8px; }
-  .combo-field { font-size: 13px; padding: 7px 10px; border-radius: 8px; }
-  .combo-label { font-size: 12px; }
-  .combo-btns { grid-template-columns: 1fr 1fr; gap: 6px; }
-  .combo-btn { font-size: 12px; padding: 8px 10px; border-radius: 8px; }
-  .combo-result { font-size: 13px; margin-top: 8px; }
-
-  /* Right: scrollable, comfortable */
-  .right-panel {
-    display: block !important;
-    height: 100%;
-    overflow-y: auto;
-    padding: 1.75rem 2.25rem;
-  }
-
-  .right-title { font-size: 12px; margin-bottom: 10px; }
-  .multi-input { font-size: 14px; min-height: 80px; padding: 12px 16px; }
-  .op-grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 9px; margin-bottom: 14px; }
-  .big-op-btn { font-size: 13px; padding: 12px 8px; border-radius: 11px; }
-  .big-op-btn .sym { font-size: 20px; margin-bottom: 4px; }
-  .sort-row { gap: 10px; margin-bottom: 14px; }
-  .sort-btn { font-size: 14px; padding: 12px 10px; border-radius: 11px; }
-  .sort-btn .sym { font-size: 22px; margin-bottom: 3px; }
-  .result-block { border-radius: 13px; }
-  .result-row { padding: 12px 18px; }
-  .rk { font-size: 14px; }
-  .rv { font-size: 15px; }
-  .rv.big { font-size: 32px; }
-}
-
-/* ═══════════════════════════════════════════
-   RIGHT PANEL COMMON STYLES
-═══════════════════════════════════════════ */
-.right-title { font-size: 10px; letter-spacing: 0.15em; color: var(--text3); text-transform: uppercase; margin-bottom: 8px; }
-.multi-input {
-  width: 100%; background: var(--bg2); border: 0.5px solid var(--border2); border-radius: 10px;
-  padding: 9px 12px; font-family: inherit; font-size: 12px; color: var(--text);
-  outline: none; transition: border-color 0.15s, background 0.25s; margin-bottom: 6px;
-  resize: vertical; min-height: 60px;
-}
-.multi-input:focus { border-color: var(--accent); }
-.multi-input::placeholder { color: var(--text3); }
-.error { color: var(--red); font-size: 11px; margin-bottom: 6px; min-height: 14px; }
-
-.op-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 6px;
-  margin-bottom: 10px;
-}
-.big-op-btn {
-  background: var(--bg2); border: 0.5px solid var(--border); border-radius: 9px;
-  padding: 8px 5px; font-family: inherit; font-size: 11px; color: var(--text2);
-  cursor: pointer; transition: background 0.1s, color 0.1s; text-align: center; line-height: 1.4;
-  touch-action: manipulation;
-}
-.big-op-btn:active { background: var(--bg3); }
-.big-op-btn .sym { display: block; font-size: 15px; color: var(--accent); margin-bottom: 2px; }
-
-.sort-row { display: flex; gap: 8px; margin-bottom: 10px; }
-.sort-btn {
-  flex: 1; background: var(--bg2); border: 0.5px solid var(--border); border-radius: 9px;
-  padding: 8px 6px; font-family: inherit; font-size: 11px; color: var(--text2);
-  cursor: pointer; transition: background 0.1s, color 0.1s; text-align: center;
-  touch-action: manipulation;
-}
-.sort-btn:active { background: var(--bg3); }
-.sort-btn .sym { display: block; font-size: 16px; color: var(--green); margin-bottom: 2px; }
-
-.result-block { background: var(--bg2); border: 0.5px solid var(--border); border-radius: 11px; overflow: hidden; transition: background 0.25s; }
-.result-row { display: flex; justify-content: space-between; align-items: baseline; padding: 13px 18px; border-bottom: 0.5px solid var(--border); gap: 10px; }
-.result-row:last-child { border-bottom: none; }
-.rk { color: var(--text3); font-size: 15px; white-space: nowrap; flex-shrink: 0; }
-.rv { color: var(--text); font-size: 16px; word-break: break-all; text-align: right; }
-.rv.big { color: var(--accent); font-size: 32px; font-weight: 700; }
-.rv.sort-val { color: var(--green); font-size: 16px; }
-
-::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
 <header class="app-header">
   <div class="header-title">// <span>programmer</span> calculator</div>
-  <div class="theme-toggle" onclick="toggleTheme()" title="Toggle dark / light mode">
+  <div class="theme-toggle" onclick="toggleTheme()">
     <span class="toggle-label" id="themeLabel">dark</span>
-    <div class="toggle-track">
-      <div class="toggle-thumb" id="toggleThumb">🌙</div>
-    </div>
+    <div class="toggle-track"><div class="toggle-thumb" id="toggleThumb">🌙</div></div>
   </div>
 </header>
 
-<!-- MOBILE TABS -->
-<div class="mob-tabs" id="mobTabs">
+<div class="mob-tabs">
   <button class="mob-tab active" onclick="mobSwitch('calc',this)">calculator</button>
   <button class="mob-tab"        onclick="mobSwitch('multi',this)">multi-value</button>
 </div>
 
-<!-- PC two-column wrapper -->
 <div class="pc-layout">
 
   <!-- ══ LEFT: Calculator ══ -->
   <section class="left-panel mob-active" id="leftPanel">
 
-    <!-- Display -->
     <div class="display">
       <div class="display-main" id="disp">0</div>
       <div class="display-expr" id="exprDisp"></div>
+      <div class="display-frac" id="dispFrac"></div>
+      <div class="display-sci"  id="dispSci"></div>
       <div class="bases">
         <div class="base-card"><div class="base-label">HEX</div><div class="base-val" id="b16">0x0</div></div>
         <div class="base-card"><div class="base-label">DEC</div><div class="base-val" id="b10">0</div></div>
@@ -427,7 +217,6 @@ body {
       </div>
     </div>
 
-    <!-- Button area: flex column, fills remaining height -->
     <div class="btn-area">
 
       <div class="sec-label">arithmetic &amp; bitwise</div>
@@ -456,15 +245,18 @@ body {
         <button class="btn num"    onclick="inputDigit('3')">3</button>
         <button class="btn logic"  onclick="inputOp('&')">&amp;</button>
         <button class="btn logic"  onclick="inputOp('|')">|</button>
+      </div>
 
+      <div class="btn-grid-last">
         <button class="btn num"    onclick="inputDigit('0')">0</button>
-        <button class="btn op"     onclick="inputHex()">0x</button>
+        <button class="btn num"    onclick="inputDot()">.</button>
+        <button class="btn op"     onclick="inputOp('**')">x&#x02b8;</button>
         <button class="btn shift"  onclick="inputOp('<<')">&lt;&lt;</button>
         <button class="btn shift"  onclick="inputOp('>>')">&gt;&gt;</button>
         <button class="btn equals" onclick="calculate()">=</button>
       </div>
 
-      <div class="sec-label">hex &amp; xor / not</div>
+      <div class="sec-label">hex &amp; bitwise ops</div>
 
       <div class="hex-row">
         <button class="btn op"    onclick="inputDigit('A')">A</button>
@@ -490,21 +282,20 @@ body {
         <button class="btn shift" onclick="doAbs()">ABS</button>
         <button class="btn shift" onclick="doSquare()">x&sup2;</button>
         <button class="btn shift" onclick="doSqrt()">&#x221A;x</button>
-        <button class="btn op"    onclick="inputOp('0b')">0b&hellip;</button>
-        <button class="btn op"    onclick="inputOp('0o')">0o&hellip;</button>
+        <button class="btn shift" onclick="inputOp('**')">x&#x02b8;</button>
+        <button class="btn shift" onclick="doSci()">&times;10&#x207F;</button>
         <button class="btn comb"  onclick="doFactorial()">n!</button>
       </div>
 
-    </div><!-- /btn-area -->
+    </div>
 
-    <!-- Combinatorics box — fixed height, always visible -->
     <div class="sec-label">combinatorics</div>
     <div class="combo-box">
       <div class="combo-inputs">
         <span class="combo-label">n =</span>
-        <input class="combo-field" id="combN" type="number" min="0" placeholder="n" />
+        <input class="combo-field" id="combN" type="number" min="0" placeholder="n"/>
         <span class="combo-label">r =</span>
-        <input class="combo-field" id="combR" type="number" min="0" placeholder="r" />
+        <input class="combo-field" id="combR" type="number" min="0" placeholder="r"/>
       </div>
       <div class="combo-btns">
         <button class="combo-btn" onclick="doCombination()">C(n,r) Combinations</button>
@@ -512,7 +303,9 @@ body {
         <button class="combo-btn" onclick="doFactorialN()">n! factorial</button>
         <button class="combo-btn" onclick="doFactorialR()">r! factorial</button>
       </div>
-      <div class="combo-result" id="comboResult">Enter n and r, then press a function.</div>
+      <div class="combo-result" id="comboResult">
+        <span class="combo-result-label">Enter n and r, then press a function.</span>
+      </div>
     </div>
 
   </section>
@@ -522,17 +315,13 @@ body {
 
     <div class="right-title">// multi-value operations</div>
     <textarea class="multi-input" id="multiVals"
-      placeholder="Paste values — space, comma, or newline separated&#10;e.g.  10 30 20 30 10&#10;or    0xFF, 0b1010, 42, 0o17"></textarea>
+      placeholder="Paste values — space, comma or newline separated&#10;e.g.  10 30 20 30 10&#10;or    0xFF, 0b1010, 42, 0o17"></textarea>
     <div class="error" id="multiErr"></div>
 
     <div class="right-title">// sort</div>
     <div class="sort-row">
-      <button class="sort-btn" onclick="multiSort('asc')">
-        <span class="sym">↑</span>ascending
-      </button>
-      <button class="sort-btn" onclick="multiSort('desc')">
-        <span class="sym">↓</span>descending
-      </button>
+      <button class="sort-btn" onclick="multiSort('asc')"><span class="sym">↑</span>ascending</button>
+      <button class="sort-btn" onclick="multiSort('desc')"><span class="sym">↓</span>descending</button>
     </div>
 
     <div class="right-title">// operations</div>
@@ -541,10 +330,11 @@ body {
       <button class="big-op-btn" onclick="multiOp('or')">     <span class="sym">|</span>OR all</button>
       <button class="big-op-btn" onclick="multiOp('and')">    <span class="sym">&amp;</span>AND all</button>
       <button class="big-op-btn" onclick="multiOp('xor')">    <span class="sym">^</span>XOR all</button>
-      <button class="big-op-btn" onclick="multiOp('min')">    <span class="sym">&#x2193;</span>MIN</button>
-      <button class="big-op-btn" onclick="multiOp('max')">    <span class="sym">&#x2191;</span>MAX</button>
+      <button class="big-op-btn" onclick="multiOp('min')">    <span class="sym">↓</span>MIN</button>
+      <button class="big-op-btn" onclick="multiOp('max')">    <span class="sym">↑</span>MAX</button>
       <button class="big-op-btn" onclick="multiOp('product')"><span class="sym">&times;</span>PRODUCT</button>
-      <button class="big-op-btn" onclick="multiOp('avg')">    <span class="sym">&#x2248;</span>AVG</button>
+      <button class="big-op-btn" onclick="multiOp('avg')">    <span class="sym">≈</span>AVG</button>
+      <button class="big-op-btn" onclick="multiOp('mex')">    <span class="sym">∅</span>MEX</button>
       <button class="big-op-btn" onclick="multiOp('notall')"> <span class="sym">~</span>NOT each</button>
     </div>
 
@@ -554,7 +344,9 @@ body {
 </div><!-- /pc-layout -->
 
 <script>
-// ── BIG INTEGER MATH ─────────────────────────────────────────
+// ═══════════════════════════════════════════
+// BIG INTEGER MATH
+// ═══════════════════════════════════════════
 function factBig(n) {
   if (n < 0n) return null;
   let r = 1n;
@@ -576,12 +368,58 @@ function permBig(n, r) {
   return res;
 }
 function fmtBig(label, val, formula) {
-  const s = val.toString(), d = s.replace('-','').length;
-  document.getElementById('comboResult').innerHTML =
-    `<b>${label}</b> = ${s}<br><span style="color:var(--text3);font-size:9px;">${formula} &nbsp;(${d} digits)</span>`;
+  const s = val.toString();
+  const digits = s.replace('-','').length;
+  const preview = digits > 40 ? s.slice(0,30) + '…' : s;
+  document.getElementById('comboResult').innerHTML = `
+    <div class="combo-result-label">${label} &nbsp;<span style="color:var(--text3);font-size:9px">${formula}</span></div>
+    <div class="combo-result-val">${preview}</div>
+    <div class="combo-result-meta">${digits} digit${digits!==1?'s':''}</div>`;
 }
 
-// ── THEME ─────────────────────────────────────────────────────
+// ═══════════════════════════════════════════
+// RATIONAL APPROXIMATION  (Stern-Brocot / continued fractions)
+// Returns "p/q" for the best rational with denominator ≤ maxDen
+// ═══════════════════════════════════════════
+function toRational(x, maxDen = 1000) {
+  if (Number.isInteger(x)) return null;
+  const sign = x < 0 ? -1 : 1;
+  const target = Math.abs(x);
+  let h0 = 1, k0 = 0, h1 = Math.floor(target), k1 = 1;
+  let xr = target;
+  let bestP = h1, bestQ = 1, bestErr = Math.abs(target - h1);
+
+  for (let i = 0; i < 50; i++) {
+    const rem = xr - Math.floor(xr);
+    if (Math.abs(rem) < 1e-12) break;
+    xr = 1 / rem;
+    const a = Math.floor(xr);
+    const h2 = a * h1 + h0;
+    const k2 = a * k1 + k0;
+    if (k2 > maxDen) break;
+    const err = Math.abs(h2 / k2 - target);
+    if (err < bestErr) { bestErr = err; bestP = h2; bestQ = k2; }
+    h0 = h1; k0 = k1; h1 = h2; k1 = k2;
+  }
+
+  if (bestQ === 1) return null;
+  if (bestErr > 1e-6) return null;
+  return `${sign < 0 ? '-' : ''}${bestP}/${bestQ}`;
+}
+
+// Scientific notation string
+function toSci(n) {
+  if (n === 0) return null;
+  const abs = Math.abs(n);
+  const exp = Math.floor(Math.log10(abs));
+  if (Math.abs(exp) < 4) return null; // not worth showing for small numbers
+  const mant = (n / Math.pow(10, exp)).toPrecision(6).replace(/\.?0+$/, '');
+  return `${mant} × 10^${exp}`;
+}
+
+// ═══════════════════════════════════════════
+// THEME
+// ═══════════════════════════════════════════
 function applyTheme(t) {
   document.documentElement.setAttribute('data-theme', t);
   const dk = t === 'dark';
@@ -592,7 +430,9 @@ function applyTheme(t) {
 function toggleTheme() { applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'); }
 applyTheme(localStorage.getItem('pc-theme') || 'dark');
 
-// ── MOBILE TABS ───────────────────────────────────────────────
+// ═══════════════════════════════════════════
+// MOBILE TABS
+// ═══════════════════════════════════════════
 function mobSwitch(tab, btn) {
   document.querySelectorAll('.mob-tab').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
@@ -600,157 +440,318 @@ function mobSwitch(tab, btn) {
   document.getElementById('rightPanel').classList.toggle('mob-active', tab === 'multi');
 }
 
-// ── CALCULATOR ────────────────────────────────────────────────
+// ═══════════════════════════════════════════
+// CALCULATOR
+// ═══════════════════════════════════════════
 let expr = '', justCalc = false;
 
 function updateDisplay(val) {
-  const n = Math.trunc(Number(val));
-  document.getElementById('disp').textContent = n.toLocaleString();
-  document.getElementById('b10').textContent  = n.toString();
-  const abs = Math.abs(n), s = n < 0 ? '-' : '';
-  document.getElementById('b16').textContent = s + '0x' + abs.toString(16).toUpperCase();
-  document.getElementById('b8').textContent  = s + '0o' + abs.toString(8);
-  document.getElementById('b2').textContent  = s + abs.toString(2);
+  const n = Number(val);
+  if (!isFinite(n)) return;
+  const isFloat = !Number.isInteger(n);
+
+  // ── 1. BIG main display: full decimal ──
+  const fullDecimal = isFloat ? parseFloat(n.toPrecision(12)).toString() : Math.trunc(n).toString();
+  document.getElementById('disp').textContent = fullDecimal;
+
+  // ── 2. dispFrac (purple): rational approximation e.g. ≈ 2/3 ──
+  const frac = isFloat ? toRational(n) : null;
+  document.getElementById('dispFrac').textContent = frac ? `≈ ${frac}` : '';
+
+  // ── 3. dispSci (green): full decimal shown again as confirmation, or sci notation ──
+  if (isFloat) {
+    const sci = toSci(n);
+    document.getElementById('dispSci').textContent = sci ? sci : fullDecimal;
+  } else {
+    const sci = toSci(n);
+    document.getElementById('dispSci').textContent = sci || '';
+  }
+
+  // ── Bases (integer part) ──
+  const trunc = Math.trunc(n);
+  const abs = Math.abs(trunc), s = trunc < 0 ? '-' : '';
+  document.getElementById('b10').textContent = isFloat ? fullDecimal : trunc.toString();
+  document.getElementById('b16').textContent = s + '0x' + abs.toString(16).toUpperCase() + (isFloat ? ' ⌊int⌋' : '');
+  document.getElementById('b8').textContent  = s + '0o' + abs.toString(8)  + (isFloat ? ' ⌊int⌋' : '');
+  document.getElementById('b2').textContent  = s + abs.toString(2)         + (isFloat ? ' ⌊int⌋' : '');
 }
+
+function updateDisplay(val) {
+  const n = Number(val);
+  if (!isFinite(n)) return;
+  const isFloat = !Number.isInteger(n);
+
+  // BIG: full number — decimal if fractional, integer if whole
+  const fullDecimal = isFloat
+    ? parseFloat(n.toPrecision(12)).toString()
+    : Math.trunc(n).toString();
+  document.getElementById('disp').textContent = fullDecimal;
+
+  // FRAC line (purple): rational approx e.g. ≈ 2/3
+  const frac = isFloat ? toRational(n) : null;
+  document.getElementById('dispFrac').textContent = frac ? `≈ ${frac}` : '';
+
+  // SCI line (green): repeat decimal or sci notation
+  if (isFloat) {
+    const sci = toSci(n);
+    document.getElementById('dispSci').textContent = sci ? sci : fullDecimal;
+  } else {
+    const sci = toSci(n);
+    document.getElementById('dispSci').textContent = sci || '';
+  }
+
+  // Bases
+  const trunc = Math.trunc(n);
+  const abs = Math.abs(trunc), s = trunc < 0 ? '-' : '';
+  document.getElementById('b10').textContent = fullDecimal;
+  document.getElementById('b16').textContent = s + '0x' + abs.toString(16).toUpperCase() + (isFloat ? ' ⌊int⌋' : '');
+  document.getElementById('b8').textContent  = s + '0o' + abs.toString(8)  + (isFloat ? ' ⌊int⌋' : '');
+  document.getElementById('b2').textContent  = s + abs.toString(2)         + (isFloat ? ' ⌊int⌋' : '');
+}
+
 function parseExpr(e) {
   return e
-    .replace(/0x([0-9a-fA-F]+)/gi, (_,h) => parseInt(h,16))
-    .replace(/0b([01]+)/gi,         (_,b) => parseInt(b,2))
-    .replace(/0o([0-7]+)/gi,        (_,o) => parseInt(o,8));
+    .replace(/0x([0-9a-fA-F]+)/gi, (_, h) => parseInt(h, 16))
+    .replace(/0b([01]+)/gi,         (_, b) => parseInt(b, 2))
+    .replace(/0o([0-7]+)/gi,        (_, o) => parseInt(o, 8));
 }
-function tryPreview() {
-  try { const r = Function('"use strict";return('+parseExpr(expr)+')')(); if(isFinite(r)) updateDisplay(r); } catch(_){}
-}
-function setExpr(t) { document.getElementById('exprDisp').textContent = t; }
 
-function inputDigit(d) { if(justCalc){expr='';justCalc=false;} expr+=d; setExpr(expr); tryPreview(); }
-function inputHex()    { if(justCalc){expr='';justCalc=false;} expr+='0x'; setExpr(expr); }
-function inputOp(op)   { if(justCalc) justCalc=false; expr+=op; setExpr(expr); }
-function backspace()   { expr=expr.slice(0,-1); setExpr(expr); if(!expr) updateDisplay(0); else tryPreview(); }
-function clearAll()    { expr=''; justCalc=false; setExpr(''); updateDisplay(0); }
+// While typing: only update the expression line, NEVER touch the big display
+function tryPreview() {
+  document.getElementById('exprDisp').textContent = expr;
+}
+
+function setExpr(t) { document.getElementById('exprDisp').textContent = t; }
+function clearAll3() {
+  document.getElementById('disp').textContent = '0';
+  document.getElementById('exprDisp').textContent = '';
+  document.getElementById('dispFrac').textContent = '';
+  document.getElementById('dispSci').textContent = '';
+  document.getElementById('b10').textContent = '0';
+  document.getElementById('b16').textContent = '0x0';
+  document.getElementById('b8').textContent  = '0o0';
+  document.getElementById('b2').textContent  = '0';
+}
+
+function inputDigit(d) {
+  if (justCalc) { expr = ''; justCalc = false; clearAll3(); }
+  expr += d;
+  tryPreview();
+}
+function inputOp(op) {
+  if (justCalc) justCalc = false;
+  expr += op;
+  tryPreview();
+}
+function inputDot() {
+  const tokens = expr.split(/[\+\-\*\/\(\)&\|\^%<>~]/);
+  const last = tokens[tokens.length - 1];
+  if (last.includes('.')) return;
+  if (justCalc) { expr = '0'; justCalc = false; clearAll3(); }
+  if (expr === '' || /[\+\-\*\/\(\)&\|\^%<>~]$/.test(expr)) expr += '0';
+  expr += '.';
+  tryPreview();
+}
+function backspace() {
+  expr = expr.slice(0, -1);
+  if (!expr) { clearAll3(); }
+  else tryPreview();
+}
+function clearAll() {
+  expr = ''; justCalc = false;
+  clearAll3();
+}
 
 function calculate() {
+  if (!expr) return;
   try {
-    const r = Math.trunc(Function('"use strict";return('+parseExpr(expr)+')')());
-    updateDisplay(r); setExpr(expr+'  =  '+r); expr=r.toString(); justCalc=true;
-  } catch(_) { setExpr('// syntax error'); }
+    const r = Function('"use strict";return(' + parseExpr(expr) + ')')();
+    if (!isFinite(r)) {
+      document.getElementById('exprDisp').textContent = '// division by zero';
+      return;
+    }
+    // Save original expression before overwriting
+    const origExpr = expr;
+    // Update big display + frac + sci
+    updateDisplay(r);
+    // expr line: show what was typed e.g. "4/6"
+    document.getElementById('exprDisp').textContent = origExpr;
+    // Store result for next operation
+    expr = Number.isInteger(r) ? r.toString() : parseFloat(r.toPrecision(12)).toString();
+    justCalc = true;
+  } catch(_) {
+    document.getElementById('exprDisp').textContent = '// syntax error';
+  }
+}
+
+// ×10ⁿ: wraps current value as val * 10^n
+function doSci() {
+  if (justCalc) justCalc = false;
+  expr += '*10**';
+  setExpr(expr + '…');
+  document.getElementById('exprDisp').textContent = expr;
 }
 
 document.addEventListener('keydown', e => {
   const tag = document.activeElement.tagName;
-  if (tag==='TEXTAREA'||tag==='INPUT') return;
+  if (tag === 'TEXTAREA' || tag === 'INPUT') return;
   if ('0123456789'.includes(e.key))         { e.preventDefault(); inputDigit(e.key); return; }
   if ('ABCDEFabcdef'.includes(e.key))       { e.preventDefault(); inputDigit(e.key.toUpperCase()); return; }
+  if (e.key === '.')                        { e.preventDefault(); inputDot(); return; }
   if (['+','-','*','/','%','&','|','^','(',')',' '].includes(e.key)) { e.preventDefault(); inputOp(e.key); return; }
-  if (e.key==='Enter'||e.key==='=')         { e.preventDefault(); calculate(); return; }
-  if (e.key==='Backspace')                  { e.preventDefault(); backspace(); return; }
-  if (e.key==='Escape')                     { e.preventDefault(); clearAll(); return; }
-  if (e.key==='~')                          { e.preventDefault(); doNot(); return; }
+  if (e.key === 'Enter' || e.key === '=')   { e.preventDefault(); calculate(); return; }
+  if (e.key === 'Backspace')                { e.preventDefault(); backspace(); return; }
+  if (e.key === 'Escape')                   { e.preventDefault(); clearAll(); return; }
+  if (e.key === '~')                        { e.preventDefault(); doNot(); return; }
 });
 
-function getCur() { try{return Math.trunc(Function('"use strict";return('+parseExpr(expr||'0')+')')());}catch(_){return 0;} }
+function getCurFloat() {
+  try { return Function('"use strict";return(' + parseExpr(expr || '0') + ')')(); }
+  catch(_) { return 0; }
+}
+function getCur() { return Math.trunc(getCurFloat()); }
 
-function doNot()     { const v=getCur(),r=~v;      expr=r.toString();updateDisplay(r);setExpr('~'+v+'  =  '+r);justCalc=true; }
-function doShift(d)  { const v=getCur(),r=d>0?v<<1:v>>1; expr=r.toString();updateDisplay(r);setExpr(v+(d>0?' << 1':' >> 1')+'  =  '+r);justCalc=true; }
-function doAbs()     { const v=getCur(),r=Math.abs(v); expr=r.toString();updateDisplay(r);setExpr('|'+v+'|  =  '+r);justCalc=true; }
-function doNegate()  { const v=getCur(),r=-v; expr=r.toString();updateDisplay(r);setExpr('-('+v+')  =  '+r);justCalc=true; }
-function doSquare()  { const v=getCur(),r=v*v; expr=r.toString();updateDisplay(r);setExpr(v+'\xb2  =  '+r);justCalc=true; }
-function doBitCount(){ const v=Math.abs(getCur()); setExpr('popcount('+v+')  =  '+v.toString(2).split('').filter(b=>b==='1').length+' bits set'); }
-function doSqrt()    { const v=getCur(); if(v<0){setExpr('// cannot sqrt negative');return;} const r=Math.trunc(Math.sqrt(v)); expr=r.toString();updateDisplay(r);setExpr('\u221a'+v+'  \u2248  '+r+' (int)');justCalc=true; }
-
+function doNot()      { const v=getCur(),r=~v; expr=r.toString();updateDisplay(r);setExpr('~'+v+'  =  '+r);justCalc=true; }
+function doShift(d)   { const v=getCur(),r=d>0?v<<1:v>>1; expr=r.toString();updateDisplay(r);setExpr(v+(d>0?' << 1':' >> 1')+'  =  '+r);justCalc=true; }
+function doAbs()      { const v=getCurFloat(),r=Math.abs(v); expr=r.toString();updateDisplay(r);setExpr('|'+v+'|  =  '+r);justCalc=true; }
+function doNegate()   { const v=getCurFloat(),r=-v; expr=r.toString();updateDisplay(r);setExpr('-('+v+')  =  '+r);justCalc=true; }
+function doSquare()   { const v=getCurFloat(),r=v*v; expr=r.toString();updateDisplay(r);setExpr(v+'\xb2  =  '+r);justCalc=true; }
+function doBitCount() { const v=Math.abs(getCur()); setExpr('popcount('+v+')  =  '+v.toString(2).split('').filter(b=>b==='1').length+' bits set'); }
+function doSqrt()     {
+  const v=getCurFloat();
+  if(v<0){setExpr('// cannot sqrt negative');return;}
+  const r=Math.sqrt(v);
+  expr=r.toString();updateDisplay(r);
+  setExpr('\u221a'+v+'  =  '+parseFloat(r.toPrecision(10)));justCalc=true;
+}
 function doFactorial() {
-  const v = getCur();
-  if (v<0||v>10000){setExpr('// n must be 0–10000');return;}
-  const r=factBig(BigInt(v)), s=r.toString(), d=s.length;
+  const v=getCur();
+  if(v<0||v>10000){setExpr('// n must be 0–10000');return;}
+  const r=factBig(BigInt(v)),s=r.toString(),d=s.length;
   setExpr(v+'!  =  '+(d>20?s.slice(0,15)+'\u2026('+d+' digits)':s));
   justCalc=true;
 }
 
-// ── COMBINATORICS BOX ─────────────────────────────────────────
+// ═══════════════════════════════════════════
+// COMBINATORICS BOX
+// ═══════════════════════════════════════════
 function getND() {
-  const n=parseInt(document.getElementById('combN').value,10);
-  const r=parseInt(document.getElementById('combR').value,10);
-  if(isNaN(n)||n<0){document.getElementById('comboResult').innerHTML='<b style="color:var(--red)">Enter valid n ≥ 0</b>';return null;}
-  return {n,r};
+  const n = parseInt(document.getElementById('combN').value, 10);
+  const r = parseInt(document.getElementById('combR').value, 10);
+  if (isNaN(n) || n < 0) {
+    document.getElementById('comboResult').innerHTML = '<span class="combo-result-label" style="color:var(--red)">Enter valid n ≥ 0</span>';
+    return null;
+  }
+  return { n, r };
 }
 function doCombination() {
-  const nd=getND();if(!nd)return;const{n,r}=nd;
-  if(isNaN(r)||r<0||r>n){document.getElementById('comboResult').innerHTML='<b style="color:var(--red)">Need 0 ≤ r ≤ n</b>';return;}
-  fmtBig('C('+n+','+r+')',combBig(BigInt(n),BigInt(r)),'n!/(r!×(n-r)!)');
+  const nd=getND(); if(!nd) return; const {n,r}=nd;
+  if (isNaN(r)||r<0||r>n) { document.getElementById('comboResult').innerHTML='<span class="combo-result-label" style="color:var(--red)">Need 0 ≤ r ≤ n</span>'; return; }
+  fmtBig('C('+n+','+r+')', combBig(BigInt(n),BigInt(r)), 'n!/(r!·(n−r)!)');
 }
 function doPermutation() {
-  const nd=getND();if(!nd)return;const{n,r}=nd;
-  if(isNaN(r)||r<0||r>n){document.getElementById('comboResult').innerHTML='<b style="color:var(--red)">Need 0 ≤ r ≤ n</b>';return;}
-  fmtBig('P('+n+','+r+')',permBig(BigInt(n),BigInt(r)),'n!/(n-r)!');
+  const nd=getND(); if(!nd) return; const {n,r}=nd;
+  if (isNaN(r)||r<0||r>n) { document.getElementById('comboResult').innerHTML='<span class="combo-result-label" style="color:var(--red)">Need 0 ≤ r ≤ n</span>'; return; }
+  fmtBig('P('+n+','+r+')', permBig(BigInt(n),BigInt(r)), 'n!/(n−r)!');
 }
 function doFactorialN() {
-  const nd=getND();if(!nd)return;const{n}=nd;
-  if(n>10000){document.getElementById('comboResult').innerHTML='<b style="color:var(--red)">n too large (max 10000)</b>';return;}
-  fmtBig(n+'!',factBig(BigInt(n)),'1×2×…×n');
+  const nd=getND(); if(!nd) return; const {n}=nd;
+  if (n>10000) { document.getElementById('comboResult').innerHTML='<span class="combo-result-label" style="color:var(--red)">n too large (max 10000)</span>'; return; }
+  fmtBig(n+'!', factBig(BigInt(n)), '1×2×…×n');
 }
 function doFactorialR() {
-  const nd=getND();if(!nd)return;const{r}=nd;
-  if(isNaN(r)||r<0){document.getElementById('comboResult').innerHTML='<b style="color:var(--red)">Enter valid r ≥ 0</b>';return;}
-  if(r>10000){document.getElementById('comboResult').innerHTML='<b style="color:var(--red)">r too large (max 10000)</b>';return;}
-  fmtBig(r+'!',factBig(BigInt(r)),'1×2×…×r');
+  const nd=getND(); if(!nd) return; const {r}=nd;
+  if (isNaN(r)||r<0) { document.getElementById('comboResult').innerHTML='<span class="combo-result-label" style="color:var(--red)">Enter valid r ≥ 0</span>'; return; }
+  if (r>10000) { document.getElementById('comboResult').innerHTML='<span class="combo-result-label" style="color:var(--red)">r too large (max 10000)</span>'; return; }
+  fmtBig(r+'!', factBig(BigInt(r)), '1×2×…×r');
 }
 
-// ── MULTI-VALUE ───────────────────────────────────────────────
+// ═══════════════════════════════════════════
+// MULTI-VALUE
+// ═══════════════════════════════════════════
 function parseVals(raw) {
-  return raw.trim().split(/[\s,;\n]+/).filter(Boolean).map(tok=>{
-    if(/^0x/i.test(tok)) return parseInt(tok.slice(2),16);
-    if(/^0b/i.test(tok)) return parseInt(tok.slice(2),2);
-    if(/^0o/i.test(tok)) return parseInt(tok.slice(2),8);
-    return parseInt(tok,10);
+  return raw.trim().split(/[\s,;\n]+/).filter(Boolean).map(tok => {
+    tok = tok.trim();
+    if (/^0x/i.test(tok)) return parseInt(tok.slice(2), 16);
+    if (/^0b/i.test(tok)) return parseInt(tok.slice(2), 2);
+    if (/^0o/i.test(tok)) return parseInt(tok.slice(2), 8);
+    return parseFloat(tok);
   });
 }
 function getMultiNums() {
-  const raw=document.getElementById('multiVals').value;
-  const err=document.getElementById('multiErr'); err.textContent='';
+  const raw = document.getElementById('multiVals').value;
+  const err = document.getElementById('multiErr');
+  err.textContent = '';
   let nums;
-  try{nums=parseVals(raw);}catch(_){err.textContent='// parse error';return null;}
-  if(!nums.length||nums.some(isNaN)){err.textContent='// invalid or empty values';return null;}
+  try { nums = parseVals(raw); } catch(_) { err.textContent = '// parse error'; return null; }
+  if (!nums.length || nums.some(isNaN)) { err.textContent = '// invalid or empty values'; return null; }
   return nums;
 }
-function fmtResult(label,result,nums,sym) {
-  const abs=Math.abs(result),s=result<0?'-':'';
-  const hex=s+'0x'+abs.toString(16).toUpperCase(), bin=s+abs.toString(2);
-  const es=nums.length<=8?nums.join(' '+sym+' '):nums.slice(0,3).join(' '+sym+' ')+' … '+nums.slice(-2).join(' '+sym+' ');
-  document.getElementById('multiResult').innerHTML=`
+function fmtResult(label, result, nums, sym) {
+  const isF = !Number.isInteger(result);
+  const abs = Math.abs(Math.trunc(result)), s = result < 0 ? '-' : '';
+  const hex = isF ? 'n/a (decimal)' : s + '0x' + abs.toString(16).toUpperCase();
+  const bin = isF ? 'n/a (decimal)' : s + abs.toString(2);
+  const es  = nums.length <= 8
+    ? nums.join(' ' + sym + ' ')
+    : nums.slice(0,3).join(' '+sym+' ') + ' … ' + nums.slice(-2).join(' '+sym+' ');
+  const frac = isF ? toRational(result) : null;
+  document.getElementById('multiResult').innerHTML = `
     <div class="result-block">
-      <div class="result-row"><span class="rk">${label}</span><span class="rv big">${result.toLocaleString()}</span></div>
+      <div class="result-row"><span class="rk">${label}</span><span class="rv big">${result.toLocaleString(undefined,{maximumFractionDigits:10})}</span></div>
+      ${frac ? `<div class="result-row"><span class="rk">fraction ≈</span><span class="rv" style="color:var(--purple)">${frac}</span></div>` : ''}
       <div class="result-row"><span class="rk">hex</span><span class="rv">${hex}</span></div>
       <div class="result-row"><span class="rk">bin</span><span class="rv">${bin}</span></div>
       <div class="result-row"><span class="rk">expression</span><span class="rv">${es} = ${result}</span></div>
       <div class="result-row"><span class="rk">count</span><span class="rv">${nums.length} values</span></div>
     </div>`;
 }
+
 function multiSort(dir) {
-  const nums=getMultiNums();if(!nums)return;
-  const sorted=[...nums].sort((a,b)=>dir==='asc'?a-b:b-a);
-  const arrow=dir==='asc'?'↑':'↓', label=dir==='asc'?'Ascending':'Descending';
-  document.getElementById('multiResult').innerHTML=`
+  const nums = getMultiNums(); if (!nums) return;
+  const sorted = [...nums].sort((a,b) => dir === 'asc' ? a-b : b-a);
+  const arrow = dir === 'asc' ? '↑' : '↓';
+  const label = dir === 'asc' ? 'Ascending' : 'Descending';
+  document.getElementById('multiResult').innerHTML = `
     <div class="result-block">
       <div class="result-row"><span class="rk">${arrow} ${label}</span><span class="rv sort-val">${sorted.join(', ')}</span></div>
       <div class="result-row"><span class="rk">count</span><span class="rv">${sorted.length} values</span></div>
       <div class="result-row"><span class="rk">min → max</span><span class="rv">${Math.min(...sorted)} → ${Math.max(...sorted)}</span></div>
     </div>`;
 }
+
 function multiOp(op) {
-  const nums=getMultiNums();if(!nums)return;
-  if(op==='sum')     return fmtResult('SUM',    nums.reduce((a,b)=>a+b,0),          nums,'+');
-  if(op==='or')      return fmtResult('OR',     nums.reduce((a,b)=>a|b,0),          nums,'|');
-  if(op==='and')     return fmtResult('AND',    nums.reduce((a,b)=>a&b,nums[0]),    nums,'&');
-  if(op==='xor')     return fmtResult('XOR',    nums.reduce((a,b)=>a^b,0),          nums,'^');
-  if(op==='min')     return fmtResult('MIN',    Math.min(...nums),                   nums,'min');
-  if(op==='max')     return fmtResult('MAX',    Math.max(...nums),                   nums,'max');
-  if(op==='product') return fmtResult('PRODUCT',nums.reduce((a,b)=>a*b,1),          nums,'×');
-  if(op==='avg')     return fmtResult('AVG',    Math.round(nums.reduce((a,b)=>a+b,0)/nums.length),nums,'+');
-  if(op==='notall') {
-    const rows=nums.map(n=>{const r=~n,ar=Math.abs(r),sr=r<0?'-':'';
-      return`<div class="result-row"><span class="rk">~${n}</span><span class="rv">${r} &nbsp; ${sr}0x${ar.toString(16).toUpperCase()} &nbsp; ${sr}${ar.toString(2)}</span></div>`;
+  const nums = getMultiNums(); if (!nums) return;
+
+  if (op === 'sum')     return fmtResult('SUM',     nums.reduce((a,b)=>a+b, 0),           nums, '+');
+  if (op === 'or')      return fmtResult('OR',      nums.reduce((a,b)=>a|b, 0),           nums, '|');
+  if (op === 'and')     return fmtResult('AND',     nums.reduce((a,b)=>a&b, nums[0]),      nums, '&');
+  if (op === 'xor')     return fmtResult('XOR',     nums.reduce((a,b)=>a^b, 0),           nums, '^');
+  if (op === 'min')     return fmtResult('MIN',     Math.min(...nums),                     nums, 'min');
+  if (op === 'max')     return fmtResult('MAX',     Math.max(...nums),                     nums, 'max');
+  if (op === 'product') return fmtResult('PRODUCT', nums.reduce((a,b)=>a*b, 1),           nums, '×');
+  if (op === 'avg')     return fmtResult('AVG',     nums.reduce((a,b)=>a+b, 0)/nums.length, nums, '+');
+
+  if (op === 'mex') {
+    // Minimum Excludant: smallest non-negative integer NOT in the set
+    const set = new Set(nums.filter(n => Number.isInteger(n) && n >= 0));
+    let mex = 0;
+    while (set.has(mex)) mex++;
+    document.getElementById('multiResult').innerHTML = `
+      <div class="result-block">
+        <div class="result-row"><span class="rk">MEX</span><span class="rv mex-val">${mex}</span></div>
+        <div class="result-row"><span class="rk">definition</span><span class="rv">smallest non-negative integer not in set</span></div>
+        <div class="result-row"><span class="rk">set</span><span class="rv">{${[...set].sort((a,b)=>a-b).join(', ')}}</span></div>
+      </div>`;
+    return;
+  }
+
+  if (op === 'notall') {
+    const rows = nums.map(n => {
+      const r = ~Math.trunc(n), ar = Math.abs(r), sr = r < 0 ? '-' : '';
+      return `<div class="result-row"><span class="rk">~${n}</span><span class="rv">${r} &nbsp; ${sr}0x${ar.toString(16).toUpperCase()} &nbsp; ${sr}${ar.toString(2)}</span></div>`;
     }).join('');
-    document.getElementById('multiResult').innerHTML=`<div class="result-block">${rows}</div>`;
+    document.getElementById('multiResult').innerHTML = `<div class="result-block">${rows}</div>`;
   }
 }
 
