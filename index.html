@@ -58,7 +58,9 @@ body{background:var(--bg);color:var(--text);font-family:'JetBrains Mono','Fira C
 /* ── DISPLAY ─────────────────────────────── */
 .display{background:var(--bg);border:.5px solid var(--border2);border-radius:10px;padding:6px 10px 7px;flex-shrink:0;transition:background .25s}
 .display-main{font-size:clamp(22px,6.5vw,28px);font-weight:700;color:var(--text);word-break:break-all;line-height:1.15;min-height:26px;letter-spacing:-.02em}
-.display-expr{font-size:clamp(13px,4vw,17px);color:var(--text2);font-weight:500;min-height:0;margin-top:2px;word-break:break-all;line-height:1.2;empty-cells:hide}
+.display-expr{width:100%;background:transparent;border:none;border-bottom:.5px solid var(--border);outline:none;font-family:inherit;font-size:clamp(13px,4vw,17px);color:var(--text2);font-weight:500;min-height:0;margin-top:3px;padding:2px 0 3px;word-break:break-all;line-height:1.2;caret-color:var(--accent)}
+.display-expr::placeholder{color:var(--text3)}
+.display-expr:focus{border-bottom-color:var(--accent)}
 .display-frac{font-size:clamp(11px,2.8vw,13px);color:var(--purple);min-height:0;margin-top:1px;word-break:break-all;letter-spacing:.02em}
 .display-sci{font-size:clamp(11px,2.8vw,13px);color:var(--green);min-height:0;margin-top:1px}
 .bases{display:grid;grid-template-columns:repeat(4,1fr);gap:3px;margin-top:5px}
@@ -112,7 +114,7 @@ body{background:var(--bg);color:var(--text);font-family:'JetBrains Mono','Fira C
   .left-panel{display:flex!important;height:100%;border-right:.5px solid var(--border);padding:16px 18px;gap:10px;overflow:hidden}
   .display{padding:14px 18px 16px;border-radius:16px}
   .display-main{font-size:clamp(28px,2.8vw,44px);min-height:52px;letter-spacing:-.03em}
-  .display-expr{font-size:clamp(18px,1.8vw,26px);min-height:30px;margin-top:6px}
+  .display-expr{font-size:clamp(18px,1.8vw,26px);min-height:0;margin-top:6px;padding:3px 0 4px}
   .display-frac{font-size:clamp(13px,1.1vw,16px);min-height:20px;margin-top:3px}
   .display-sci{font-size:clamp(13px,1.1vw,16px);min-height:20px;margin-top:2px}
   .bases{gap:8px;margin-top:10px}
@@ -206,7 +208,7 @@ body{background:var(--bg);color:var(--text);font-family:'JetBrains Mono','Fira C
 
     <div class="display">
       <div class="display-main" id="disp">0</div>
-      <div class="display-expr" id="exprDisp"></div>
+      <input class="display-expr" id="exprDisp" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="type or paste expression…" />
       <div class="display-frac" id="dispFrac"></div>
       <div class="display-sci"  id="dispSci"></div>
       <div class="bases">
@@ -525,15 +527,15 @@ function parseExpr(e) {
     .replace(/0o([0-7]+)/gi,        (_, o) => parseInt(o, 8));
 }
 
-// While typing: only update the expression line, NEVER touch the big display
-function tryPreview() {
-  document.getElementById('exprDisp').textContent = expr;
-}
+// ── INPUT FIELD is source of truth ───────────────────────────
+function inp() { return document.getElementById('exprDisp'); }
+function syncExpr() { expr = inp().value; }
 
-function setExpr(t) { document.getElementById('exprDisp').textContent = t; }
+function setExpr(t) { expr = t; inp().value = t; }
+
 function clearAll3() {
   document.getElementById('disp').textContent = '0';
-  document.getElementById('exprDisp').textContent = '';
+  inp().value = ''; expr = '';
   document.getElementById('dispFrac').textContent = '';
   document.getElementById('dispSci').textContent = '';
   document.getElementById('b10').textContent = '0';
@@ -542,72 +544,91 @@ function clearAll3() {
   document.getElementById('b2').textContent  = '0';
 }
 
+// Insert text at cursor position in the input
+function insertAtCursor(text) {
+  const el = inp();
+  el.focus();
+  const s = el.selectionStart, e2 = el.selectionEnd;
+  const v = el.value;
+  const newVal = v.slice(0, s) + text + v.slice(e2);
+  el.value = newVal; expr = newVal;
+  const pos = s + text.length;
+  requestAnimationFrame(() => { el.selectionStart = el.selectionEnd = pos; });
+}
+
 function inputDigit(d) {
-  if (justCalc) { expr = ''; justCalc = false; clearAll3(); }
-  expr += d;
-  tryPreview();
+  if (justCalc) { clearAll3(); justCalc = false; }
+  insertAtCursor(d);
 }
 function inputOp(op) {
   if (justCalc) justCalc = false;
-  expr += op;
-  tryPreview();
+  insertAtCursor(op);
 }
 function inputDot() {
-  const tokens = expr.split(/[\+\-\*\/\(\)&\|\^%<>~]/);
-  const last = tokens[tokens.length - 1];
-  if (last.includes('.')) return;
-  if (justCalc) { expr = '0'; justCalc = false; clearAll3(); }
-  if (expr === '' || /[\+\-\*\/\(\)&\|\^%<>~]$/.test(expr)) expr += '0';
-  expr += '.';
-  tryPreview();
+  if (justCalc) { clearAll3(); justCalc = false; inp().value = '0'; expr = '0'; }
+  const el = inp();
+  const s = el.selectionStart;
+  const before = el.value.slice(0, s);
+  const tokens = before.split(/[\+\-\*\/\(\)&\|\^%<>~]/);
+  if (tokens[tokens.length - 1].includes('.')) return;
+  const prefix = (el.value === '' || /[\+\-\*\/\(\)&\|\^%<>~]$/.test(before)) ? '0' : '';
+  insertAtCursor(prefix + '.');
 }
 function backspace() {
-  expr = expr.slice(0, -1);
-  if (!expr) { clearAll3(); }
-  else tryPreview();
+  const el = inp(); el.focus();
+  const s = el.selectionStart, e2 = el.selectionEnd;
+  if (s !== e2) {
+    const v = el.value;
+    const newVal = v.slice(0, s) + v.slice(e2);
+    el.value = newVal; expr = newVal;
+    requestAnimationFrame(() => { el.selectionStart = el.selectionEnd = s; });
+  } else if (s > 0) {
+    const v = el.value;
+    const newVal = v.slice(0, s - 1) + v.slice(s);
+    el.value = newVal; expr = newVal;
+    requestAnimationFrame(() => { el.selectionStart = el.selectionEnd = s - 1; });
+  }
+  if (!el.value) clearAll3();
 }
-function clearAll() {
-  expr = ''; justCalc = false;
-  clearAll3();
-}
+function clearAll() { justCalc = false; clearAll3(); }
 
 function calculate() {
-  if (!expr) return;
+  syncExpr();
+  if (!expr.trim()) return;
   try {
     const r = Function('"use strict";return(' + parseExpr(expr) + ')')();
-    if (!isFinite(r)) {
-      document.getElementById('exprDisp').textContent = '// division by zero';
-      return;
-    }
+    if (!isFinite(r)) { inp().value = '// division by zero'; return; }
     const origExpr = expr;
     updateDisplay(r);
-    document.getElementById('exprDisp').textContent = origExpr;
-    // Store result — use full integer string for integers to avoid 1e+21 style
-    if (Number.isInteger(r)) {
-      try { expr = BigInt(Math.trunc(r)).toString(); }
-      catch(_) { expr = Math.trunc(r).toString(); }
-    } else {
-      expr = parseFloat(r.toPrecision(12)).toString();
-    }
+    inp().value = origExpr; expr = origExpr;
     justCalc = true;
-  } catch(_) {
-    document.getElementById('exprDisp').textContent = '// syntax error';
-  }
+  } catch(_) { inp().value = '// syntax error'; }
 }
 
-// ×10ⁿ: wraps current value as val * 10^n
+// ×10ⁿ: insert scientific notation operator
 function doSci() {
   if (justCalc) justCalc = false;
-  expr += '*10**';
-  setExpr(expr + '…');
-  document.getElementById('exprDisp').textContent = expr;
+  insertAtCursor('*10**');
 }
 
+// Listen to direct typing/paste in the input
+document.addEventListener('DOMContentLoaded', () => {
+  const el = inp();
+  el.addEventListener('input', () => { justCalc = false; expr = el.value; });
+  el.addEventListener('keydown', ev => {
+    if (ev.key === 'Enter' || ev.key === '=') { ev.preventDefault(); calculate(); }
+    if (ev.key === 'Escape') { ev.preventDefault(); clearAll(); }
+  });
+});
+
+// Global keydown: only when input is NOT focused (button presses on mobile etc)
 document.addEventListener('keydown', e => {
+  if (document.activeElement === inp()) return; // let input handle itself
   const tag = document.activeElement.tagName;
-  if (tag === 'TEXTAREA' || tag === 'INPUT') return;
-  if ('0123456789'.includes(e.key))         { e.preventDefault(); inputDigit(e.key); return; }
-  if ('ABCDEFabcdef'.includes(e.key))       { e.preventDefault(); inputDigit(e.key.toUpperCase()); return; }
+  if (tag === 'TEXTAREA') return;
+
+  if ('0123456789'.includes(e.key))         { e.preventDefault(); inp().focus(); inputDigit(e.key); return; }
+  if ('ABCDEFabcdef'.includes(e.key))       { e.preventDefault(); inp().focus(); inputDigit(e.key.toUpperCase()); return; }
   if (e.key === '.')                        { e.preventDefault(); inputDot(); return; }
   if (['+','-','*','/','%','&','|','^','(',')',' '].includes(e.key)) { e.preventDefault(); inputOp(e.key); return; }
   if (e.key === 'Enter' || e.key === '=')   { e.preventDefault(); calculate(); return; }
@@ -617,6 +638,7 @@ document.addEventListener('keydown', e => {
 });
 
 function getCurFloat() {
+  syncExpr();
   try { return Function('"use strict";return(' + parseExpr(expr || '0') + ')')(); }
   catch(_) { return 0; }
 }
